@@ -1,3 +1,38 @@
+# Command History
+on zsh
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+nvm install 22
+node -v # Should print "v22.12.0".
+nvm current # Should print "v22.12.0".
+npm -v # Should print "10.9.0".
+on nushell
+add $env.PATH = ( $env.PATH | prepend "~/.nvm/versions/node/v22.12.0/bin" )
+install yarn `npm install --global yarn`
+install mariadb `sudo apt install mariadb-server`
+
+run `npm start` <- this is webserver
+`python3 app.py` <- this is python interpreter
+
+## mariadb
+`sudo systemctl start mysql`
+`sudo systemctl status mysql`
+
+```sql
+CREATE DATABASE login_system;
+USE login_system;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+```
+## tailwind
+
+npx tailwindcss -i ./src/main.css -o ./src/output.css --watch
+yarn add -D tailwindcss
+npx tailwindcss init
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

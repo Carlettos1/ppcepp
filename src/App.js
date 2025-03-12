@@ -1,35 +1,38 @@
-import React, { useState } from 'react';
-import CodeEditor from './components/CodeEditor';
-import Output from './components/Output';
-import axios from 'axios';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './components/Login';
+import Register from './components/Register';
+import Dashboard from './components/Dashboard';
+import Test from './components/Test';
+import Playground from './components/Playground';
+import Intro from './components/Intro';
 
-function App() {
-  const [code, setCode] = useState('');
-  const [output, setOutput] = useState('');
-
-  const executeCode = async () => {
-    try {
-      const response = await axios.post("http://localhost:5000/execute", { code });
-      setOutput(response.data.output);
-    } catch (error) {
-      setOutput("Error Executing Code: " + error.message);
-    }
-  }
-
-  return (
-    <div className="App">
-      <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-        <h1>Python Code Editor</h1>
-        <CodeEditor code={code} setCode={setCode} />
-        <button onClick={executeCode} style={{ margin: '10px 0', padding: '10px 20px' }}>
-          Run Code
-        </button>
-        <Output output={output} />
-      </div>
-    </div>
-  );
-}
+const App = () => {
+    return (
+        <Router>
+            <div class="block"></div>
+            <div class="columns">
+                <div class="column is-2"></div>
+                <div class="column is-8">
+                    <h1 class="title is-1">
+                        Proyecto de Plataforma Computacional para Evaluación y Pŕactica de Programación
+                    </h1>
+                </div>
+                <div class="column is-2"></div>
+            </div>
+            <div class="block"></div>
+            <div>
+                <Routes>
+                    <Route path="/" element={<Intro />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/test" element={<Test />} />
+                    <Route path="/playground" element={<Playground />} />
+                </Routes>
+            </div>
+        </Router>
+    );
+};
 
 export default App;

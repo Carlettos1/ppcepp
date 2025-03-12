@@ -8,6 +8,7 @@ const router = express.Router();
 // Registration
 router.post('/register', async (req, res) => {
     const { username, password } = req.body;
+    console.log("registering: " + username)
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -28,6 +29,7 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
+    console.log("login: " + username)
 
     db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
         if (err || results.length === 0) {

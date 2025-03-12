@@ -2,7 +2,7 @@ import React from 'react';
 
 const Output = ({ output }) => {
   return (
-    <div style={{ whiteSpace: 'pre-wrap', background: '#f4f4f4', padding: '10px', borderRadius: '5px' }}>
+    <div class="block">
       <strong>Output:</strong>
       <pre>{output}</pre>
     </div>
