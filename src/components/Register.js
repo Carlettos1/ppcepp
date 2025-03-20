@@ -6,12 +6,45 @@ const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [admin, setAdmin] = React.useState(false);
+    React.useEffect(() => {
+        axios.get("http://localhost:5001/auth/verify", {
+            headers: {
+                Authorization: `${localStorage.getItem('authToken')}`
+            }
+        })
+        .then((response) => {
+            if (response.data.role) {
+                setAdmin(true);
+                console.log("Admin");
+            }
+            console.log(response.data.message);
+        })
+        .catch((error) => {
+            navigate("/");
+        });
+    }
+    , []);
+    if (!admin) {
+        return (
+            <div>
+                <div class="columns">
+                    <div class="column"></div>
+                    <div class="column is-4">
+                        <h1 class="title is-1">No tienes permisos</h1>
+                    </div>
+                    <div class="column"></div>
+                </div>
+            </div>
+        );
+    }
 
     const handleRegister = async (event) => {
         event.preventDefault()
         try {
             const response = await axios.post('http://localhost:5001/auth/register', { username, password });
+            // TODO: change ip
             setMessage(response.data.message);
         } catch (error) {
             setMessage(error.response?.data?.error || "An error ocurred");

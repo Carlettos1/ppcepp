@@ -37,15 +37,29 @@ router.post('/login', (req, res) => {
         }
 
         const user = results[0];
+        /*
+            user: {id, username, password, superuser}
+        */
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
             return res.status(400).json({ error: 'Invalid username or password' });
         }
 
-        const token = jwt.sign({ id: user.id }, 'your_secret_key', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, role: user.superuser }, 'your_secret_key', { expiresIn: '1h' });
         res.json({ message: 'Login successful', token });
     });
 });
+
+router.get("/verify", (req, res) => {
+    const token = req.headers['authorization'];
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+
+    jwt.verify(token, 'your_secret_key', (err, user) => {
+        if (err) return res.status(403).json({ error: 'Forbidden' });
+        res.json({ message: 'Authorized', role: user.role, id: user.id });
+    });
+}
+);
 
 module.exports = router;

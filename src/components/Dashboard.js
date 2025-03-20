@@ -1,8 +1,28 @@
+import axios from 'axios';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
     const navigate = useNavigate();
+    const [admin, setAdmin] = React.useState(false);
+    React.useEffect(() => {
+        axios.get("http://localhost:5001/auth/verify", {
+            headers: {
+                Authorization: `${localStorage.getItem('authToken')}`
+            }
+        })
+        .then((response) => {
+            if (response.data.role) {
+                setAdmin(true);
+                console.log("Admin");
+            }
+            console.log(response.data.message);
+        })
+        .catch((error) => {
+            navigate('/');
+        });
+    }
+    , []);
 
     return (
         <div>
