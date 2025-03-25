@@ -14,13 +14,13 @@ import Answers from './components/Answers';
 const App = () => {
     return (
         <Router>
-            <Header isAdmin={true} />
+            <Header/>
             <div class="block"></div>
             <div class="columns">
                 <div class="column is-2"></div>
                 <div class="column is-8">
                     <h1 class="title is-1">
-                        Proyecto de Plataforma Computacional para Evaluación y Pŕactica de Programación
+                        Proyecto de Plataforma Computacional para Evaluación y Pŕactica de Programaciónaaaaa
                     </h1>
                 </div>
                 <div class="column is-2"></div>
@@ -42,7 +42,7 @@ const App = () => {
     );
 };
 
-const Header = ({ isAdmin }) => {
+const Header = () => {
     const [admin, setAdmin] = React.useState(false);
     React.useEffect(() => {
         axios.get("http://localhost:5001/auth/verify", {
