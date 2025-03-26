@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CodeExample from './CodeExample';
+const API_IP = process.env.REACT_APP_API_IP;
 
 const Answers = () => {
     const [answers, setAnswers] = useState([]);
@@ -9,7 +10,7 @@ const Answers = () => {
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        axios.get("http://localhost:5001/auth/verify", {
+        axios.get(`${API_IP}/auth/verify`, {
             headers: {
                 Authorization: `${localStorage.getItem('authToken')}`
             }
@@ -19,7 +20,7 @@ const Answers = () => {
                 setAdmin(true);
                 console.log("Admin");
 
-                axios.get("http://localhost:5001/answer/all/named")
+                axios.get(`${API_IP}/answer/all/named`)
                 .then((response) => {
                     setAnswers(response.data);
                 })

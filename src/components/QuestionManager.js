@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+const API_IP = process.env.REACT_APP_API_IP;
 /* question architecture:
     id: int
     title: string
@@ -13,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 const QuestionManager = () => {
     const [questions, setQuestions] = React.useState([]);
     React.useEffect(() => {
-        axios.get('http://localhost:5001/question/all')
+        axios.get(`${API_IP}/question/all`)
             .then((response) => {
                 setQuestions(response.data);
                 console.log(response.data);
@@ -27,7 +28,7 @@ const QuestionManager = () => {
         const title = document.querySelector('input[placeholder="Title"]').value;
         const question = document.querySelector('textarea[placeholder="Question"]').value;
         const example = document.querySelector('textarea[placeholder="Example"]').value;
-        axios.post('http://localhost:5001/question', {
+        axios.post(`${API_IP}/question`, {
             title: title,
             question: question,
             example: example
@@ -48,7 +49,7 @@ const QuestionManager = () => {
     const navigate = useNavigate();
     const [admin, setAdmin] = React.useState(false);
     React.useEffect(() => {
-        axios.get("http://localhost:5001/auth/verify", {
+        axios.get(`${API_IP}/auth/verify`, {
             headers: {
                 Authorization: `${localStorage.getItem('authToken')}`
             }
@@ -138,7 +139,7 @@ const ShowableQuestion = ({title, question, example, id}) => {
         const title = document.querySelector('textarea[placeholder="Title'+id+'"]').value;
         const question = document.querySelector('textarea[placeholder="Question'+id+'"]').value;
         const example = document.querySelector('textarea[placeholder="Example'+id+'"]').value;
-        axios.put('http://localhost:5001/question/' + id, {
+        axios.put(`${API_IP}/question/` + id, {
             title: title,
             question: question,
             example: example
@@ -151,7 +152,7 @@ const ShowableQuestion = ({title, question, example, id}) => {
         });
     }
     const onDelete = () => {
-        axios.delete('http://localhost:5001/question/' + id)
+        axios.delete(`${API_IP}/question/` + id)
         .then((response) => {
             console.log(response.data);
         })

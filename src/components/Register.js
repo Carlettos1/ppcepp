@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+const API_IP = process.env.REACT_APP_API_IP;
 
 const Register = () => {
     const [username, setUsername] = useState('');
@@ -9,7 +10,7 @@ const Register = () => {
     const navigate = useNavigate();
     const [admin, setAdmin] = React.useState(false);
     React.useEffect(() => {
-        axios.get("http://localhost:5001/auth/verify", {
+        axios.get(`${API_IP}/auth/verify`, {
             headers: {
                 Authorization: `${localStorage.getItem('authToken')}`
             }
@@ -43,7 +44,7 @@ const Register = () => {
     const handleRegister = async (event) => {
         event.preventDefault()
         try {
-            const response = await axios.post('http://localhost:5001/auth/register', { username, password });
+            const response = await axios.post(`/auth/register`, { username, password });
             // TODO: change ip
             setMessage(response.data.message);
         } catch (error) {
@@ -64,7 +65,7 @@ const Register = () => {
                         <div class="field">
                             <label class="label">Rut</label>
                             <div class="control">
-                                <input class="input" type="rut" placeholder="e.g. 12.345.678-9" onChange={(e) => setUsername(e.target.value)}></input>
+                                <input class="input" type="rut" placeholder="e.g. 12345678" onChange={(e) => setUsername(e.target.value)}></input>
                             </div>
                         </div>
                         <div class="field">

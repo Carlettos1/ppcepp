@@ -10,6 +10,8 @@ import QuestionManager from './components/QuestionManager';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Answers from './components/Answers';
+const API_IP = process.env.REACT_APP_API_IP;
+console.log(API_IP);
 
 const App = () => {
     return (
@@ -45,7 +47,7 @@ const App = () => {
 const Header = () => {
     const [admin, setAdmin] = React.useState(false);
     React.useEffect(() => {
-        axios.get("http://localhost:5001/auth/verify", {
+        axios.get(`${API_IP}/auth/verify`, {
             headers: {
                 Authorization: `${localStorage.getItem('authToken')}`
             }

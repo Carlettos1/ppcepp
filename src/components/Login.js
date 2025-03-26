@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+const API_IP = process.env.REACT_APP_API_IP;
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -12,7 +13,7 @@ const Login = () => {
         event.preventDefault()
         try {
             console.log("login...")
-            const response = await axios.post('http://localhost:5001/auth/login', { username, password });
+            const response = await axios.post(`${API_IP}/auth/login`, { username, password });
             setMessage(response.data.message);
 
             if (response.data.token) {

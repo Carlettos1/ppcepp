@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CodePlatform from '../CodePlatform';
 import Question from './Question';
 import axios from 'axios';
+const API_IP = process.env.REACT_APP_API_IP;
 
 const Test = () => {
     const [submitted, setSubmitted] = useState(false);
@@ -13,7 +14,7 @@ const Test = () => {
         editors.forEach((editor) => {
             if (editor.id === "practica") {
                 console.log(question_id + " - " + editor.childNodes[2].innerText);
-                axios.post('http://localhost:5001/exam', {
+                axios.post(`${API_IP}/exam`, {
                     question_id: question_id,
                     answer: editor.childNodes[2].innerText
                 }, {
@@ -36,7 +37,7 @@ const Test = () => {
     // get all questions
     const [questions, setQuestions] = useState([]);
     React.useEffect(() => {
-        axios.get('http://localhost:5001/question/all')
+        axios.get(`${API_IP}/question/all`)
             .then((response) => {
                 setQuestions(response.data);
                 console.log(response.data);
@@ -47,7 +48,7 @@ const Test = () => {
     }, []);
 
     React.useEffect(() => {
-        axios.get("http://localhost:5001/exam", {
+        axios.get(`${API_IP}/exam`, {
             headers: {
                 Authorization: `${localStorage.getItem('authToken')}`
             }
