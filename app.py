@@ -29,7 +29,6 @@ def execute_code():
             detach=False,
             remove=True,
             mem_limit="128m",
-            cpu_shares=1,
             network_disabled=True,
             stdin_open=False,
             tty=True,
@@ -45,6 +44,7 @@ def execute_code():
             return jsonify({"output": f"Exedió el tiempo ({time.time() - now:.2f} s)"}), 200
         return jsonify({"error": e.stderr.decode()}), 400
     except Exception as e:
+        print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
