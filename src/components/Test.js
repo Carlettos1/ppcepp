@@ -31,7 +31,7 @@ const Test = () => {
         // reload after a second
         setTimeout(() => {
             window.location.reload();
-        }, 1000);
+        }, 10000);
     }
 
     // get all questions

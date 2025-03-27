@@ -44,8 +44,7 @@ const Register = () => {
     const handleRegister = async (event) => {
         event.preventDefault()
         try {
-            const response = await axios.post(`/auth/register`, { username, password });
-            // TODO: change ip
+            const response = await axios.post(`${API_IP}/auth/register`, { username, password });
             setMessage(response.data.message);
         } catch (error) {
             setMessage(error.response?.data?.error || "An error ocurred");

@@ -35,14 +35,13 @@ const QuestionManager = () => {
         })
         .then((response) => {
             console.log(response.data);
+            setTimeout(() => {
+                window.location.reload();
+            }, 100);
         })
         .catch((error) => {
             console.error(error);
         });
-        setTimeout(() => {
-            window.location.reload();
-        }, 200);
-
     }
 
 
@@ -155,13 +154,13 @@ const ShowableQuestion = ({title, question, example, id}) => {
         axios.delete(`${API_IP}/question/` + id)
         .then((response) => {
             console.log(response.data);
+            setTimeout(() => {
+                window.location.reload();
+            }, 200);
         })
         .catch((error) => {
             console.error(error);
         });
-        setTimeout(() => {
-            window.location.reload();
-        }, 200);
     };
     let reducedTitle = title.length > 20 ? title.substring(0, 20) + "..." : title;
     return (
