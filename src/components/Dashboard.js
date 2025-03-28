@@ -1,29 +1,11 @@
-import axios from 'axios';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import useVerify from '../Verify';
 const API_IP = process.env.REACT_APP_API_IP;
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const [admin, setAdmin] = React.useState(false);
-    React.useEffect(() => {
-        axios.get(`${API_IP}/auth/verify`, {
-            headers: {
-                Authorization: `${localStorage.getItem('authToken')}`
-            }
-        })
-        .then((response) => {
-            if (response.data.role) {
-                setAdmin(true);
-                console.log("Admin");
-            }
-            console.log(response.data.message);
-        })
-        .catch((error) => {
-            navigate('/');
-        });
-    }
-    , []);
+    const isAdmin = useVerify();
 
     return (
         <div>

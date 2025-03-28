@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CodePlatform from '../CodePlatform';
 import Question from './Question';
 import axios from 'axios';
@@ -6,13 +6,15 @@ const API_IP = process.env.REACT_APP_API_IP;
 
 const Test = () => {
     const [submitted, setSubmitted] = useState(false);
-    const [progressBarHidden, setProgressBarHidden] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [received, setReceived] = useState(["Recibidos:"]);
+    const lastEventRef = useRef(new Date().getTime());
 
     const onDeliver = async (event) => {
         let editors = document.querySelectorAll(".ace_editor");
-        let question_id = 1; // db is 1-indexed
         editors.forEach((editor) => {
             if (editor.id === "practica") {
+                const question_id = editor.parentElement.attributes[1].value;
                 console.log(question_id + " - " + editor.childNodes[2].innerText);
                 axios.post(`${API_IP}/exam`, {
                     question_id: question_id,
@@ -21,14 +23,15 @@ const Test = () => {
                     headers: {
                         Authorization: `${localStorage.getItem('authToken')}`
                     }
+                }).then((r) => {
+                    setReceived(prev => [...prev, question_id]);
                 });
-                question_id += 1;
             }
         });
-        // disable the submit button
+
         event.target.disabled = true;
-        setProgressBarHidden(false);
-        // reload after a second
+        setLoading(true);
+
         setTimeout(() => {
             window.location.reload();
         }, 10000);
@@ -62,13 +65,45 @@ const Test = () => {
         });
     }, []);
 
+    useEffect(() => {
+        const handleFocus = () => {
+            const now = new Date().getTime();
+            console.log("User is back on the page: " + ((now - lastEventRef.current) / 1000));
+            axios.post(`${API_IP}/cheat_log`, {
+                user_id: localStorage.getItem('user_id'),
+                action: 0,
+                context: "focus vuelto: " + ((now - lastEventRef.current) / 1000) + " segundos",
+            });
+        };
+        const handleBlur = async () => {
+            const now = new Date().getTime();
+            console.log("Notifying blur");
+      
+            axios.post(`${API_IP}/cheat_log`, {
+                user_id: localStorage.getItem('user_id'),
+                action: 0,
+                context: "focus perdido",
+            });
+            lastEventRef.current = now;
+        };
+      
+        window.addEventListener("focus", handleFocus);
+        window.addEventListener("blur", handleBlur);
+      
+        return () => {
+          window.removeEventListener("focus", handleFocus);
+          window.removeEventListener("blur", handleBlur);
+        };
+    }, []);
+      
+
     if (submitted) {
         return (
             <div class="block">
                 <div class="columns">
                     <div class="column"></div>
                     <div class="column is-8">
-                        <h class="subtitle is-3">Ya has entregado el examen</h>
+                        <h class="subtitle is-3">Ya has entregado la evaluación</h>
                     </div>
                     <div class="column"></div>
                 </div>
@@ -88,15 +123,15 @@ const Test = () => {
             <div class="block"/>
             <hr class="block" style={{"height": "2px"}}/>
             {questions.map((question) => {
-                    return <Question example={question.example} question={question.question} title={question.title} test={true}/>;
+                    return <Question example={question.example} question={question.question} title={question.title} test={true} question_id={question.id}/>;
                 })}
             <div class="columns">
                 <div class="column"></div>
                 <div class="column is-8">
-                    <button class="button is-danger" onClick={onDeliver}>
+                    <button class={"button is-large is-danger " + (loading ? "is-loading" : "")} onClick={onDeliver}>
                         ENTREGAR
                     </button>
-                    <progress class="progress is-primary" max="100" hidden={progressBarHidden}></progress>
+                    <p>{ received.join(" ") }</p>
                 </div>
                 <div class="column"></div>
             </div>

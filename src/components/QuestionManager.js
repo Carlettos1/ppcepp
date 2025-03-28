@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import useVerify from '../Verify';
+import SinPermisos from './SinPermisos';
 const API_IP = process.env.REACT_APP_API_IP;
 /* question architecture:
     id: int
@@ -13,6 +15,7 @@ const API_IP = process.env.REACT_APP_API_IP;
 
 const QuestionManager = () => {
     const [questions, setQuestions] = React.useState([]);
+    const isAdmin = useVerify();
     React.useEffect(() => {
         axios.get(`${API_IP}/question/all`)
             .then((response) => {
@@ -44,38 +47,9 @@ const QuestionManager = () => {
         });
     }
 
-
-    const navigate = useNavigate();
-    const [admin, setAdmin] = React.useState(false);
-    React.useEffect(() => {
-        axios.get(`${API_IP}/auth/verify`, {
-            headers: {
-                Authorization: `${localStorage.getItem('authToken')}`
-            }
-        })
-        .then((response) => {
-            if (response.data.role) {
-                setAdmin(true);
-                console.log("Admin");
-            }
-            console.log(response.data.message);
-        })
-        .catch((error) => {
-            navigate("/");
-        });
-    }
-    , []);
-    if (!admin) {
+    if (!isAdmin) {
         return (
-            <div>
-                <div class="columns">
-                    <div class="column"></div>
-                    <div class="column is-4">
-                        <h1 class="title is-1">No tienes permisos</h1>
-                    </div>
-                    <div class="column"></div>
-                </div>
-            </div>
+            <SinPermisos/>
         );
     }
     
@@ -117,13 +91,13 @@ const QuestionManager = () => {
                 <div class="column"/>
             </div>
             <div class="block">
-                <ul>
+                <div>
                     {questions.map((question) => {
                         return (
-                            <ShowableQuestion title={question.title} question={question.question} example={question.example} id={question.id}/>
+                            <ShowableQuestion key={question.id} title={question.title} question={question.question} example={question.example} id={question.id}/>
                         );
                     })}
-                </ul>
+                </div>
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
 import CodePlatform from "../CodePlatform";
 import CodeExample from "./CodeExample";
 
-const Question = ({title, question, example, test}) => {
+const Question = ({title, question, example, test, question_id}) => {
     return (
     <div class="block">
         <div class="columns">
@@ -12,7 +12,7 @@ const Question = ({title, question, example, test}) => {
                     <p>{question}</p>
                     <CodeExample code={example}/>
                 </div>
-                <CodePlatform test={test}/>
+                <CodePlatform test={test} question_id={question_id}/>
             </div>
             <div class="column is-2"></div>
         </div>

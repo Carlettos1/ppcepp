@@ -6,7 +6,7 @@ import logo from './logo.svg';
 import './App.css';
 const API_IP = process.env.REACT_APP_API_IP;
 
-const CodePlatform = ({test}) => {
+const CodePlatform = ({test, question_id}) => {
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
 
@@ -21,7 +21,7 @@ const CodePlatform = ({test}) => {
 
   return (
     <div class="block">
-      <CodeEditor code={code} setCode={setCode} test={test}/>
+      <CodeEditor code={code} setCode={setCode} test={test} question_id={question_id}/>
       <button class="block button is-link" onClick={executeCode}>
         Correr Código
       </button>

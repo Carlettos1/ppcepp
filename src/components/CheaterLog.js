@@ -1,22 +1,25 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import CodeExample from './CodeExample';
 import useVerify from '../Verify';
 import SinPermisos from './SinPermisos';
 const API_IP = process.env.REACT_APP_API_IP;
 
-const Answers = () => {
-    const [answers, setAnswers] = useState([]);
+const CheaterLog = () => {
+    const [cheatLogs, setCheatLogs] = useState([]);
     const isAdmin = useVerify();
 
     useEffect(() => {
-        axios.get(`${API_IP}/answer/all/named`)
-        .then((response) => {
-            setAnswers(response.data);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+        const interval = setInterval(() => {
+            axios.get(`${API_IP}/cheat_log/all/named`)
+            .then((response) => {
+                setCheatLogs(response.data);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        }, 100);
+
+        return () => clearInterval(interval);
     }, []);
 
     if (!isAdmin) {
@@ -24,10 +27,10 @@ const Answers = () => {
     }
 
     const onDelete = (id) => {
-        axios.delete(`${API_IP}/answer/${id}`)
+        axios.delete(`${API_IP}/cheat_log/${id}`)
         .then((response) => {
             console.log(response.data);
-            setAnswers(prev => [...prev.filter(answer => answer.id !== id)])
+            setCheatLogs(prev => [...prev.filter(log => log.id !== id)])
         })
         .catch((error) => {
             console.error(error);
@@ -54,18 +57,18 @@ const Answers = () => {
                     </tr>
                 </tfoot>
                 <tbody>
-                    {answers.map((answer) => (
-                        <tr key={answer.id}>
-                            <td class="is-narrow"><button class="button is-danger is-small" onClick={() => onDelete(answer.id)}>Borrar</button></td>
-                            <td class="is-narrow">{answer.user_name}</td>
-                            <td class="is-narrow">{answer.question.length > 20 ? answer.question.substring(0, 20) + "..." : answer.question}</td>
-                            <td><CodeExample code={answer.answer}/></td>
+                    {cheatLogs.map((cheatLog) => (
+                        <tr key={cheatLog.id}>
+                            <td class="is-narrow"><button class="button is-danger is-small" onClick={() => onDelete(cheatLog.id)}>Borrar</button></td>
+                            <td class="is-narrow">{cheatLog.user_name}</td>
+                            <td class="is-narrow">{cheatLog.action}</td>
+                            <td>{cheatLog.context}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
         </div>
     );
-};
+}
 
-export default Answers;
+export default CheaterLog;

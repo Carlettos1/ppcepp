@@ -1,9 +1,7 @@
 import React from 'react';
 import Login from './Login';
-import { useNavigate } from 'react-router-dom';
 
-const Playground = () => {
-    const navigate = useNavigate()
+const Intro = () => {
     return (
         <div>
             <div class="block"></div>
@@ -12,4 +10,4 @@ const Playground = () => {
     );
 };
 
-export default Playground;
+export default Intro;
