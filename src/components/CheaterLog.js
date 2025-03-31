@@ -44,16 +44,16 @@ const CheaterLog = () => {
                     <tr>
                         <th>Borrar</th>
                         <th>Estudiante</th>
-                        <th>Pregunta</th>
-                        <th>Respuesta</th>
+                        <th>Acción</th>
+                        <th>Contexto</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
                         <th>Borrar</th>
                         <th>Estudiante</th>
-                        <th>Pregunta</th>
-                        <th>Respuesta</th>
+                        <th>Acción</th>
+                        <th>Contexto</th>
                     </tr>
                 </tfoot>
                 <tbody>

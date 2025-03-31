@@ -27,7 +27,7 @@ const Answers = () => {
         axios.delete(`${API_IP}/answer/${id}`)
         .then((response) => {
             console.log(response.data);
-            setAnswers(prev => [...prev.filter(answer => answer.id !== id)])
+            setAnswers(prev => [...prev.filter(answer => answer.id !== id)]);
         })
         .catch((error) => {
             console.error(error);

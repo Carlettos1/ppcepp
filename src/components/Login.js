@@ -17,6 +17,7 @@ const Login = () => {
             setMessage(response.data.message);
 
             if (response.data.token) {
+                localStorage.clear();
                 localStorage.setItem('authToken', response.data.token);
                 localStorage.setItem("user_name", response.data.user.username);
                 localStorage.setItem("user_id", response.data.user.id);

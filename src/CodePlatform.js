@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CodeEditor from './components/CodeEditor';
 import Output from './components/Output';
 import axios from 'axios';
@@ -19,9 +19,22 @@ const CodePlatform = ({test, question_id}) => {
     }
   }
 
+  useEffect(() => {
+    const saved = localStorage.getItem(`editor-${question_id}`);
+    console.log(saved);
+    if (saved !== null) {
+      setCode(saved);
+    }
+  }, [question_id]);
+
+  const handleSave = (newValue) => {
+    setCode(newValue);
+    localStorage.setItem(`editor-${question_id}`, newValue);
+  };
+
   return (
     <div class="block">
-      <CodeEditor code={code} setCode={setCode} test={test} question_id={question_id}/>
+      <CodeEditor code={code} setCode={handleSave} test={test} question_id={question_id}/>
       <button class="block button is-link" onClick={executeCode}>
         Correr Código
       </button>

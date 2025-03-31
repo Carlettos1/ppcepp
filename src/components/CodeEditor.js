@@ -64,6 +64,7 @@ const CodeEditor = ({ code, setCode, test, question_id }) => {
             theme="monokai"
             name="practica" 
             width="100%"
+            value={code}
             onChange={(newValue) => {setCode(newValue);}}
             fontSize={14}
             lineHeight={19}

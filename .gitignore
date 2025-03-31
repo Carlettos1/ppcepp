@@ -11,6 +11,8 @@ backend/node_modules
 
 # production
 /build
+/inner
+massRegister.py
 
 # misc
 .DS_Store

@@ -7,6 +7,7 @@ const cheatLogRoutes = require('./routes/cheat_log');
 const questionRoutes = require('./routes/question');
 const examRoutes = require('./routes/exam');
 const executeRoutes = require('./routes/execute');
+const userRoutes = require("./routes/user");
 const process = require('process');
 const argv = process.argv[2];
 const PORT = 5001;
@@ -20,6 +21,7 @@ app.use("/cheat_log", cheatLogRoutes);
 app.use("/question", questionRoutes);
 app.use("/exam", examRoutes);
 app.use("/execute", executeRoutes);
+app.use("/user", userRoutes);
 
 if (argv == "dev") {
 	app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
