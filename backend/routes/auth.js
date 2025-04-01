@@ -33,7 +33,7 @@ router.post('/login', (req, res) => {
 
     db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
         if (err || results.length === 0) {
-            return res.status(400).json({ error: 'Invalid username or password' });
+            return res.status(400).json({ error: 'Invalid username or password 1' });
         }
 
         const user = results[0];
@@ -43,7 +43,7 @@ router.post('/login', (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            return res.status(400).json({ error: 'Invalid username or password' });
+            return res.status(400).json({ error: 'Invalid username or password 2' });
         }
 
         const token = jwt.sign({ id: user.id, role: user.superuser }, 'your_secret_key', { expiresIn: '1h' });
