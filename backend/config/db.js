@@ -1,38 +1,42 @@
 const mysql = require('mysql');
 
-let db;
-
 const dbConfig = {
     host: "127.0.0.1",
     user: "admin",
     password: "1234",
     database: "login_system",
+    connectionLimit: 10,
+    waitForConnections: true,
+    queueLimit: 0,
 };
 
-function connect() {
-    db = mysql.createConnection(dbConfig);
+// Use a connection pool
+const pool = mysql.createPool(dbConfig);
 
-    db.connect((err) => {
-        if (err) {
-            console.error('Error connecting to MySQL database:', err);
-            setTimeout(connect, 2000); // Retry connection after 2 seconds
-        } else {
-            console.log('Connected to MySQL database.');
-        }
+pool.getConnection((err, connection) => {
+    if (err) {
+        console.error('Database connection failed:', err);
+        return;
+    }
+    console.log('Connected to MySQL database.');
+    connection.release();
+});
+
+// Handle MySQL connection errors
+pool.on('error', (err) => {
+    console.error('MySQL Pool Error:', err);
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+        console.error('Attempting to reconnect...');
+    }
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+    pool.end((err) => {
+        if (err) console.error('Error closing MySQL pool:', err);
+        console.log('MySQL pool closed.');
+        process.exit(0);
     });
+});
 
-    db.on('error', (err) => {
-        console.error('MySQL error:', err);
-        if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
-            db.destroy();
-            console.error('Reconnecting to MySQL database...');
-            connect(); // Reconnect if connection is lost
-        } else {
-            throw err; // Handle other errors
-        }
-    });
-}
-
-connect();
-
-module.exports = db;
+module.exports = pool;
