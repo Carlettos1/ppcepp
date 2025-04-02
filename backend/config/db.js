@@ -24,6 +24,7 @@ function connect() {
     db.on('error', (err) => {
         console.error('MySQL error:', err);
         if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
+            db.destroy();
             console.error('Reconnecting to MySQL database...');
             connect(); // Reconnect if connection is lost
         } else {
