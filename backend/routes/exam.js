@@ -34,7 +34,7 @@ router.post('/', (req, res) => {
 
     jwt.verify(token, 'your_secret_key', (err, user) => {
         if (err) return res.status(403).json({ error: 'Forbidden' });
-        console.log(user.id + ": " + req.body);
+        console.log("Entregando prueba de: " + user.id + ": " + req.body);
         const { question_id, answer } = req.body;
         db.query('INSERT INTO answer (question_id, user_id, answer) VALUES (?, ?, ?)', [question_id, user.id, answer], (err, results) => {
             if (err) {
