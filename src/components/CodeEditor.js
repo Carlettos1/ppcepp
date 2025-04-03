@@ -66,8 +66,8 @@ const CodeEditor = ({ code, setCode, test, question_id }) => {
             width="100%"
             value={code}
             onChange={(newValue) => {setCode(newValue);}}
-            fontSize={14}
-            lineHeight={19}
+            fontSize={20}
+            lineHeight={22}
             showPrintMargin={false}
             showGutter={true}
             highlightActiveLine={true}

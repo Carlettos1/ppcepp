@@ -15,11 +15,11 @@ const CodeExample = ({code}) => {
             name="example" 
             width="100%"
             value={code}
-            fontSize={14}
+            fontSize={20}
             onPaste={(paster) => console.log(paster)}
-            lineHeight={19}
+            lineHeight={22}
             showPrintMargin={false}
-            height={"" + String(code).split("\n").length * 19 + "px"}
+            height={"" + String(code).split("\n").length * 22 + "px"}
             setOptions={{
                 readOnly: true,
                 highlightActiveLine: false,
