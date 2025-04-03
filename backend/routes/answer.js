@@ -20,7 +20,7 @@ router.get('/all', (req, res) => {
 });
 
 router.get('/all/named', (req, res) => {
-    db.query('SELECT answer.id, users.username as user_name, question.title as question, answer.answer as answer FROM answer INNER JOIN users ON answer.user_id = users.id INNER JOIN question ON answer.question_id = question.id', (err, results) => {
+    db.query('SELECT answer.id, users.username as user_name, question.title as question, answer.answer as answer FROM answer INNER JOIN users ON answer.user_id = users.id INNER JOIN question ON answer.question_id = question.id ORDER BY users.id DESC', (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Internal server error' });
         }
