@@ -22,7 +22,7 @@ const CodeEditor = ({ code, setCode, test, question_id }) => {
                 axios.post(`${API_IP}/cheat_log`, {
                     user_id: localStorage.getItem('user_id'),
                     action: 2, // 2 = copy/paste/cut, 1 = switching tab, 0 = losing focus
-                    context: e.type + ": " + e.clipboardData.getData("text/plain"),
+                    context: e.type + ": " + e.clipboardData.getData("text/plain").substring(0, 300),
                 });
             }
             e.stopPropagation();
@@ -37,7 +37,7 @@ const CodeEditor = ({ code, setCode, test, question_id }) => {
                 axios.post(`${API_IP}/cheat_log`, {
                     user_id: localStorage.getItem('user_id'),
                     action: 2, // 2 = copy/paste/cut, 1 = switching tab, 0 = losing focus
-                    context: e.type + ": " + window.getSelection().toString(),
+                    context: e.type + ": " + window.getSelection().toString().substring(0, 300),
                 });
             }
             e.stopPropagation();

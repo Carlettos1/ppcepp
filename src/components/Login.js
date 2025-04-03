@@ -12,8 +12,10 @@ const Login = () => {
     const handleLogin = async (event) => {
         event.preventDefault()
         try {
-            console.log("login...")
-            const response = await axios.post(`${API_IP}/auth/login`, { username, password });
+            const _username = username.split('@')[0];
+            const _password = password.replaceAll(".", "").replaceAll("-", "").replaceAll("k", "K");
+            console.log("login...");
+            const response = await axios.post(`${API_IP}/auth/login`, { username: _username, password: _password });
             setMessage(response.data.message);
 
             if (response.data.token) {
@@ -35,13 +37,13 @@ const Login = () => {
                 <div class="column is-6">
                     <form class="box">
                         <div class="field">
-                            <label class="label">Rut</label>
+                            <label class="label">Correo</label>
                             <div class="control">
-                                <input class="input" type="rut" placeholder="e.g. 12.345.678-9" onChange={(e) => setUsername(e.target.value)}></input>
+                                <input class="input" type="email" placeholder="e.g. a.bcdefghijk@uandresbello.edu" onChange={(e) => setUsername(e.target.value)}></input>
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">Contraseña</label>
+                            <label class="label">Rut</label>
                             <div class="control">
                                 <input class="input" type="password" placeholder="*********" onChange={(e) => setPassword(e.target.value)}></input>
                             </div>

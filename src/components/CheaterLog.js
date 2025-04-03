@@ -17,7 +17,7 @@ const CheaterLog = () => {
             .catch((error) => {
                 console.error(error);
             });
-        }, 100);
+        }, 1000);
 
         return () => clearInterval(interval);
     }, []);
