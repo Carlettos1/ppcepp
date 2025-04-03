@@ -25,7 +25,7 @@ pool.getConnection((err, connection) => {
 // Handle MySQL connection errors
 pool.on('error', (err) => {
     console.error('MySQL Pool Error:', err);
-    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+    if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
         console.error('Attempting to reconnect...');
     }
 });

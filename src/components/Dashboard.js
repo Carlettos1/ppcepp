@@ -13,15 +13,15 @@ const Dashboard = () => {
             <div class="columns">
                 <div class="column"></div>
                 <div class="column is-4">
-                    <figure class="image button is-link" onClick={() => navigate('/test')}>
-                        <img alt="Test" src="https://cdn-icons-png.flaticon.com/512/1946/1946058.png"></img>
-                    </figure>
+                    <button class="button is-link is-fullwidth" onClick={() => navigate('/test')}>
+                        Evaluación
+                    </button>
                 </div>
                 <div class="column"></div>
                 <div class="column is-4">
-                    <figure class="image button is-link" onClick={() => navigate('/playground')}>
-                        <img alt="Playground" src="https://as2.ftcdn.net/jpg/05/03/28/01/1000_F_503280113_MZRPtkiA7ghUEb6mRkii1MA5wRpsxy2W.jpg"></img>
-                    </figure>
+                    <button class="button is-link is-fullwidth" onClick={() => navigate('/playground')}>
+                        Playground
+                    </button>
                 </div>
                 <div class="column"></div>
             </div>
