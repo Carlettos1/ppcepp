@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 client = docker.from_env()  # Connect to Docker daemon
-timeout = 2  # seconds
+timeout = 5  # seconds
 
 @app.route("/execute", methods=["POST"])
 def execute_code():
