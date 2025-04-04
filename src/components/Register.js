@@ -28,7 +28,7 @@ const Register = () => {
             navigate("/");
         });
     }
-    , []);
+    , [navigate]);
 
     if (!admin) {
         return (
