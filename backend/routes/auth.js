@@ -7,15 +7,18 @@ const router = express.Router();
 
 // Registration
 router.post('/register', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, teacher } = req.body;
+    if (!teacher) {
+        teacher = 2;
+    }
     console.log("registering: " + username)
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         db.query(
-            'INSERT INTO users (username, password) VALUES (?, ?)',
-            [username, hashedPassword],
+            'INSERT INTO users (username, password, teacher) VALUES (?, ?, ?)',
+            [username, hashedPassword, teacher],
             (err, result) => {
                 if (err) return res.status(400).json({ error: 'User already exists' });
                 res.status(201).json({ message: 'User registered successfully' });
