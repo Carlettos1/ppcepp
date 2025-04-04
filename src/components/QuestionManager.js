@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import useVerify from '../Verify';
 import SinPermisos from './SinPermisos';
 const API_IP = process.env.REACT_APP_API_IP;
@@ -11,6 +10,7 @@ const API_IP = process.env.REACT_APP_API_IP;
     example: string
     created_at: timestamp
     updated_at: timestamp
+    prepend: string
 */
 
 const QuestionManager = () => {
@@ -31,21 +31,37 @@ const QuestionManager = () => {
         const title = document.querySelector('input[placeholder="Title"]').value;
         const question = document.querySelector('textarea[placeholder="Question"]').value;
         const example = document.querySelector('textarea[placeholder="Example"]').value;
+        const prepend = document.querySelector('textarea[placeholder="Prepend"]').value;
         axios.post(`${API_IP}/question`, {
             title: title,
             question: question,
-            example: example
+            example: example,
+            prepend: prepend
         })
         .then((response) => {
             console.log(response.data);
-            setTimeout(() => {
-                window.location.reload();
-            }, 100);
+            setQuestions(prev => [...prev, response.data]);
+            alert("Question created");
+            document.querySelector('input[placeholder="Title"]').value = "";
+            document.querySelector('textarea[placeholder="Question"]').value = "";
+            document.querySelector('textarea[placeholder="Example"]').value = "";
+            document.querySelector('textarea[placeholder="Prepend"]').value = "";
         })
         .catch((error) => {
             console.error(error);
         });
     }
+
+    const onDelete = (id) => {
+        axios.delete(`${API_IP}/question/` + id)
+        .then((response) => {
+            console.log(response.data);
+            setQuestions(prev => [...prev.filter(question => question.id !== id)]);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    };
 
     if (!isAdmin) {
         return (
@@ -83,6 +99,12 @@ const QuestionManager = () => {
                         </div>
                     </div>
                     <div class="field">
+                        <label class="label">Prepend</label>
+                        <div class="control">
+                            <textarea class="textarea" placeholder="Prepend"></textarea>
+                        </div>
+                    </div>
+                    <div class="field">
                         <div class="control">
                             <button class="button is-link" onClick={onSubmit}>Create</button>
                         </div>
@@ -94,7 +116,7 @@ const QuestionManager = () => {
                 <div>
                     {questions.map((question) => {
                         return (
-                            <ShowableQuestion key={question.id} title={question.title} question={question.question} example={question.example} id={question.id}/>
+                            <ShowableQuestion key={question.id} title={question.title} question={question.question} example={question.example} prepend={question.prepend} id={question.id} onDelete={onDelete}/>
                         );
                     })}
                 </div>
@@ -103,7 +125,7 @@ const QuestionManager = () => {
     );
 }
 
-const ShowableQuestion = ({title, question, example, id}) => {
+const ShowableQuestion = ({title, question, example, prepend, id, onDelete}) => {
     const [show, setShow] = React.useState(false);
     const onClick = () => {
         setShow(!show);
@@ -112,10 +134,12 @@ const ShowableQuestion = ({title, question, example, id}) => {
         const title = document.querySelector('textarea[placeholder="Title'+id+'"]').value;
         const question = document.querySelector('textarea[placeholder="Question'+id+'"]').value;
         const example = document.querySelector('textarea[placeholder="Example'+id+'"]').value;
+        const prepend = document.querySelector('textarea[placeholder="Prepend'+id+'"]').value;
         axios.put(`${API_IP}/question/` + id, {
             title: title,
             question: question,
-            example: example
+            example: example,
+            prepend: prepend
         })
         .then((response) => {
             console.log(response.data);
@@ -124,18 +148,6 @@ const ShowableQuestion = ({title, question, example, id}) => {
             console.error(error);
         });
     }
-    const onDelete = () => {
-        axios.delete(`${API_IP}/question/` + id)
-        .then((response) => {
-            console.log(response.data);
-            setTimeout(() => {
-                window.location.reload();
-            }, 200);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
-    };
     let reducedTitle = title.length > 20 ? title.substring(0, 20) + "..." : title;
     return (
         <div class="block">
@@ -156,7 +168,7 @@ const ShowableQuestion = ({title, question, example, id}) => {
                                     <button class="button is-warning" onClick={onEdit}>({id}) Edit</button>
                                 </div>
                                 <div class="column is-2">
-                                    <button class="button is-danger" onClick={onDelete}>({id}) Delete</button>
+                                    <button class="button is-danger" onClick={() => onDelete(id)}>({id}) Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -166,7 +178,7 @@ const ShowableQuestion = ({title, question, example, id}) => {
             </div>
             <div>
                 {show ? (
-                    <EditableQuestion title={title} question={question} example={example} test={false} id={id}/>
+                    <EditableQuestion title={title} question={question} example={example} prepend={prepend} test={false} id={id}/>
                 ) : (
                     <></>
                 )}
@@ -175,7 +187,7 @@ const ShowableQuestion = ({title, question, example, id}) => {
     );
 }
 
-const EditableQuestion = ({title, question, example, id}) => {
+const EditableQuestion = ({title, question, example, prepend, id}) => {
     return (    
     <div class="block">
         <div class="columns">
@@ -198,6 +210,12 @@ const EditableQuestion = ({title, question, example, id}) => {
                         <label class="label">Example</label>
                         <div class="control">
                             <textarea class="textarea" placeholder={"Example"+id}>{example}</textarea>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Prepend</label>
+                        <div class="control">
+                            <textarea class="textarea" placeholder={"Prepend"+id}>{prepend}</textarea>
                         </div>
                     </div>
                 </div>

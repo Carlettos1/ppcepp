@@ -7,6 +7,7 @@ const db = require('../config/db');
     example: string
     created_at: timestamp
     updated_at: timestamp
+    prepend: string
 */
 
 const router = express.Router();
@@ -35,8 +36,8 @@ router.get('/:id', (req, res) => {
 // modify question
 router.put('/:id', (req, res) => {
     const { id } = req.params;
-    const { title, question, example } = req.body;
-    db.query('UPDATE question SET title = ?, question = ?, example = ? WHERE id = ?', [title, question, example, id], (err, results) => {
+    const { title, question, example, prepend } = req.body;
+    db.query('UPDATE question SET title = ?, question = ?, example = ?, prepend = ? WHERE id = ?', [title, question, example, prepend, id], (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Internal server error' });
         }
@@ -46,12 +47,12 @@ router.put('/:id', (req, res) => {
 
 // create question
 router.post('/', (req, res) => {
-    const { title, question, example } = req.body;
-    db.query('INSERT INTO question (title, question, example) VALUES (?, ?, ?)', [title, question, example], (err, results) => {
+    const { title, question, example, prepend } = req.body;
+    db.query('INSERT INTO question (title, question, example, prepend) VALUES (?, ?, ?, ?)', [title, question, example, prepend], (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Internal server error' });
         }
-        res.json({ message: 'Question created' });
+        res.json({ title, question, example, prepend, id: results.insertId });
     });
 });
 

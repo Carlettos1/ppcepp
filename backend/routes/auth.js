@@ -48,7 +48,7 @@ router.post('/login', (req, res) => {
             return res.status(400).json({ error: 'Invalid username or password 2' });
         }
 
-        const token = jwt.sign({ id: user.id, role: user.superuser }, 'your_secret_key', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, role: user.superuser }, 'your_secret_key', { expiresIn: '3h' });
         res.json({ message: 'Login successful', token, user: { id: user.id, username: user.username } });
     });
 });

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import CodeEditor from './components/CodeEditor';
 import Output from './components/Output';
 import axios from 'axios';
-import logo from './logo.svg';
 import './App.css';
 const API_IP = process.env.REACT_APP_API_IP;
 
@@ -12,7 +11,7 @@ const CodePlatform = ({test, question_id}) => {
 
   const executeCode = async () => {
     try {
-      const response = await axios.post(`${API_IP}/execute`, { code });
+      const response = await axios.post(`${API_IP}/execute`, { code, question_id });
       setOutput(response.data.output);
     } catch (error) {
       setOutput("Error Executing Code: " + error.message);

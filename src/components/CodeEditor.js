@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/theme-monokai";
@@ -53,7 +53,7 @@ const CodeEditor = ({ code, setCode, test, question_id }) => {
             document.removeEventListener("paste", stopPaste, true);
             document.removeEventListener("cut", stopCopy, true);
         };
-    }, []);
+    }, [test]);
 
 
     return (
@@ -80,26 +80,6 @@ const CodeEditor = ({ code, setCode, test, question_id }) => {
                 dragEnabled: false,
                 tabSize: 2,
             }}
-            /*commands={
-                // Prevents copy/paste/cut
-                test ? [{
-                    name: "copy_paste",
-                    bindKey: {win: "ctrl-c|ctrl-v|ctrl-x|ctrl-shift-v|shift-del", mac: "cmd-c|cmd-v|cmd-x"},
-                    exec: function(editor, a) {
-                        console.log("Preventing copy/paste/cut on ace_editor");
-                        
-                        return;
-                        // send report to api_ip/cheat_log
-                        axios.post(`${API_IP}/cheat_log`, {
-                            user_id: localStorage.getItem('user_id'),
-                            action: 2, // 2 = copy/paste/cut, 1 = switching tab, 0 = losing focus
-                            context: navigator.clipboard.readText(),
-                        });
-                        // clear clipboard
-                        navigator.clipboard.writeText("");
-                    }
-                }
-            ] : undefined}*/
         />
         </div>
     );
