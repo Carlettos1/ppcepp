@@ -21,29 +21,39 @@ def execute_code():
     container_name = f"code-runner-{uuid.uuid4()}"
     
     try:
-        print(f"Container {container_name} started")
+        print(f"Container {container_name} started with:\n{code}")
         now = time.time()
         container = client.containers.run(
             "python:3.10",
-            command=["timeout", "-k", "1s", f"{timeout}s", "python3", "-c", f"{code}"],
-            detach=False,
-            remove=True,
+            name=container_name,
+            command=f"timeout {timeout}s python3 -c \"{code.replace('"', '\\"')}\"",
+            detach=True,
+            remove=False,
             mem_limit="128m",
             network_disabled=True,
             stdin_open=False,
-            tty=True,
+            tty=False,
         )
-        log = container.decode().strip()
-        print(f"Container {container_name} stopped after {time.time() - now:.2f} seconds")
-        if len(log) == 0:
-            return jsonify({"output": "Output vacío"}), 200
-        return jsonify({"output": log}), 200
+        
+        exit_status = container.wait(timeout=timeout)
+        duration = time.time() - now
+
+        logs = container.logs(stdout=True, stderr=True).decode()
+        container.remove(force=True)
+
+        if exit_status["StatusCode"] == 124:
+            return jsonify({"output": f"Exedió el tiempo ({duration:.2f}s)"}), 200
+
+        return jsonify({"output": logs.strip(),
+                        "status_code": exit_status["StatusCode"],
+                        "duration": duration
+                        }), 200
 
     except docker.errors.ContainerError as e:
-        print(f"Container error: {e}")
-        if "124" in f"{e}":
-            return jsonify({"output": f"Exedió el tiempo ({time.time() - now:.2f} s)"}), 200
-        return jsonify({"output": e.stderr.decode()}), 400
+        return jsonify({"output": e.stderr.decode() if e.stderr else str(e),
+                        "status_code": e.exit_status,
+                        "error": "Container Error"
+                        }), 400
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"output": str(e)}), 500

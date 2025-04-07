@@ -9,7 +9,7 @@ const Question = ({title, question, example, test, question_id}) => {
             <div class="column is-8">
                 <div class="content box">
                     <h1>{title}</h1>
-                    <p>{question}</p>
+                    <p style={{whiteSpace: "pre-line"}}>{question}</p>
                     <CodeExample code={example}/>
                 </div>
                 <CodePlatform test={test} question_id={question_id}/>
