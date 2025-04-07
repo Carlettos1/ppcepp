@@ -5,9 +5,15 @@ const db = require('../config/db');
 
 const router = express.Router();
 
+/* 
+* martes: 12:10-14:00 fabrizzio (67)
+* martes: 14:00-16:00 cata, clau (28, 51)
+* mierco: 12:10-14:00 carlos, yas (91, 131)
+*/
+
 // Registration
 router.post('/register', async (req, res) => {
-    const { username, password, teacher } = req.body;
+    var { username, password, teacher } = req.body;
     if (!teacher) {
         teacher = 2;
     }
@@ -49,6 +55,32 @@ router.post('/login', (req, res) => {
 
         if (!isPasswordValid) {
             return res.status(400).json({ error: 'Invalid username or password 2' });
+        }
+
+        const now = new Date();
+        const time_67 = new Date("2025-04-08T12:00:00.000-04:00");
+        const time_28 = new Date("2025-04-08T14:00:00.000-04:00");
+        const time_91 = new Date("2025-04-09T12:00:00.000-04:00");
+
+        if (user.teacher == 67) {
+            const difference = now.getTime() - time_67.getTime();
+            if (difference < 0 || difference >= 2*60*60*1000) {
+                return res.status(400).json({ error: "Tiempo de ingreso inválido" });
+            }
+        }
+
+        if (user.teacher == 28 || user.teacher == 51) {
+            const difference = now.getTime() - time_28.getTime();
+            if (difference < 0 || difference >= 2*60*60*1000) {
+                return res.status(400).json({ error: "Tiempo de ingreso inválido" });
+            }
+        }
+
+        if (user.teacher == 91 || user.teacher == 131) {
+            const difference = now.getTime() - time_91.getTime();
+            if (difference < 0 || difference >= 2*60*60*1000) {
+                return res.status(400).json({ error: "Tiempo de ingreso inválido" });
+            }
         }
 
         const token = jwt.sign({ id: user.id, role: user.superuser }, 'your_secret_key', { expiresIn: '3h' });
