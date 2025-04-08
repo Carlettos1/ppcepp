@@ -10,13 +10,23 @@ const CheaterLog = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            axios.get(`${API_IP}/cheat_log/all/named`)
-            .then((response) => {
-                setCheatLogs(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+            if (parseInt(localStorage.getItem("user_id")) <= 3) { // can see all logs
+                axios.get(`${API_IP}/cheat_log/all/named`)
+                .then((response) => {
+                    setCheatLogs(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+            } else {
+                axios.get(`${API_IP}/cheat_log/teacher/${localStorage.getItem("user_id")}`)
+                .then((response) => {
+                    setCheatLogs(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+            }
         }, 1000);
 
         return () => clearInterval(interval);
