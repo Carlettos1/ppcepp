@@ -3,12 +3,14 @@ import CodePlatform from '../CodePlatform';
 import Question from './Question';
 import axios from 'axios';
 const API_IP = process.env.REACT_APP_API_IP;
+import useVerify from '../Verify';
 
 const Test = () => {
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [received, setReceived] = useState(["Recibidos:"]);
     const lastEventRef = useRef(new Date().getTime());
+    const isAdmin = useVerify();
 
     const onDeliver = async (event) => {
         let editors = document.querySelectorAll(".ace_editor");
@@ -109,6 +111,10 @@ const Test = () => {
                 </div>
             </div>
         );
+    }
+
+    if (isAdmin) {
+        return <div>Admin</div>
     }
 
     return (
