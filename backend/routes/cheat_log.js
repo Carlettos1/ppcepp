@@ -88,7 +88,7 @@ router.get('/user/:id', (req, res) => {
     });
 });
 
-router.get("teacher/:id", (req, res) => {
+router.get("/teacher/:id", (req, res) => {
     const { id } = req.params;
     db.query("SELECT cheat_log.id, users.username as user_name, cheat_log.action as action, cheat_log.context as context, UNIX_TIMESTAMP(cheat_log.timestamp) as timestamp FROM cheat_log INNER JOIN users ON cheat_log.user_id = users.id WHERE users.teacher = ? ORDER BY cheat_log.timestamp DESC LIMIT 100", [id], (err, results) => {
         if (err) {
