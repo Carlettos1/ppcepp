@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Answers from './components/Answers';
 import useVerify from './Verify';
+import TeacherQuestionManager from './components/TeacherQuestionManager';
 const API_IP = process.env.REACT_APP_API_IP;
 console.log(API_IP);
 
@@ -39,6 +40,7 @@ const App = () => {
                     <Route path="/test" element={<Test />} />
                     <Route path="/playground" element={<Playground />} />
                     <Route path="/question-manager" element={<QuestionManager />} />
+                    <Route path="/teacher-question-manager/:id" element={<TeacherQuestionManager />} />
                     <Route path="/Answers" element={<Answers />} />
                     <Route path="/cheat_log" element={<CheaterLog />} />
                 </Routes>
@@ -63,6 +65,7 @@ const Header = () => {
                             <div class="navbar-dropdown">
                                 <Link to="/register" className="navbar-item">Register</Link>
                                 <Link to="/question-manager" className="navbar-item">Question Manager</Link>
+                                <Link to="/teacher-question-manager/:id" className="navbar-item">Teacher Question Manager</Link>
                                 <Link to="/Answers" className="navbar-item">Answers</Link>
                                 <Link to="/cheat_log" className="navbar-item">Cheat Log</Link>
                             </div>

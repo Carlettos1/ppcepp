@@ -12,6 +12,7 @@ const process = require('process');
 const argv = process.argv[2];
 const PORT = 5001;
 const app = express();
+const teacherQuestionRouter = require('./routes/teacher_question');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -22,6 +23,7 @@ app.use("/question", questionRoutes);
 app.use("/exam", examRoutes);
 app.use("/execute", executeRoutes);
 app.use("/user", userRoutes);
+app.use('/teacher-question', teacherQuestionRouter);
 
 if (argv == "dev") {
 	app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

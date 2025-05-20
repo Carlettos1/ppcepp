@@ -14,8 +14,17 @@ const Login = () => {
         try {
             const _username = username.split('@')[0];
             const _password = password.replaceAll(".", "").replaceAll("-", "").replaceAll("k", "K");
-            console.log("login...");
-            const response = await axios.post(`${API_IP}/auth/login`, { username: _username, password: _password });
+            console.log("Attempting login with:", { 
+                originalUsername: username,
+                processedUsername: _username,
+                originalPassword: password,
+                processedPassword: _password
+            });
+            const response = await axios.post(`${API_IP}/auth/login`, { 
+                username: _username, 
+                password: _password 
+            });
+            console.log("Login response:", response.data);
             setMessage(response.data.message);
 
             if (response.data.token) {
@@ -26,7 +35,8 @@ const Login = () => {
                 navigate('/dashboard');
             }
         } catch (error) {
-            setMessage(error.response?.data?.error || "An error ocurred");
+            console.error("Login error:", error.response?.data || error);
+            setMessage(error.response?.data?.error || "An error occurred");
         }
     };
 

@@ -1,16 +1,43 @@
 import React, { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import CodePlatform from '../CodePlatform';
 import Question from './Question';
-import axios from 'axios';
-const API_IP = process.env.REACT_APP_API_IP;
 import useVerify from '../Verify';
+import useUser from '../User';
+const API_IP = process.env.REACT_APP_API_IP;
 
 const Test = () => {
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [received, setReceived] = useState(["Recibidos:"]);
     const lastEventRef = useRef(new Date().getTime());
-    const isAdmin = useVerify();
+    const user = useUser();
+
+    // get questions based on user type
+    const [questions, setQuestions] = useState([]);
+    React.useEffect(() => {
+        if (!user?.isAdmin && user?.teacher) {
+            // Student - get questions assigned by their teacher
+            axios.get(`${API_IP}/question/teacher/${user.teacher}`)
+                .then((response) => {
+                    setQuestions(response.data);
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else if (user?.isAdmin) {
+            // Admin - get all questions
+            axios.get(`${API_IP}/question/all`)
+                .then((response) => {
+                    setQuestions(response.data);
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+    }, [user]);
 
     const onDeliver = async (event) => {
         let editors = document.querySelectorAll(".ace_editor");
@@ -38,19 +65,6 @@ const Test = () => {
             window.location.reload();
         }, 10000);
     }
-
-    // get all questions
-    const [questions, setQuestions] = useState([]);
-    React.useEffect(() => {
-        axios.get(`${API_IP}/question/all`)
-            .then((response) => {
-                setQuestions(response.data);
-                console.log(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }, []);
 
     React.useEffect(() => {
         axios.get(`${API_IP}/exam`, {
@@ -113,7 +127,7 @@ const Test = () => {
         );
     }
 
-    if (isAdmin) {
+    if (user?.isAdmin) {
         return <div>Admin</div>
     }
 

@@ -9,7 +9,7 @@ const Playground = () => {
                 <div class="column is-8">
                     <h1 class="title">Playground</h1>
                     <p class="subtitle is-4">Prueba el código aquí</p>
-                    <CodePlatform test={false}/>
+                    <CodePlatform test={false} question_id={null}/>
                 </div>
                 <div class="column"></div>
             </div>

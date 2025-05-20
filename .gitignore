@@ -26,3 +26,22 @@ yarn-debug.log*
 yarn-error.log*
 *.lock
 *lock.json
+
+# hist
+hist.txt
+hist_backup.txt
+
+# docker i think
+/data
+backend/data
+/lib
+backend/lib
+/lib64
+backend/lib64
+/bin
+backend/bin
+
+# logs
+/logs
+backend/logs
+

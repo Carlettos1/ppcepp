@@ -67,4 +67,20 @@ router.delete('/:id', (req, res) => {
     });
 });
 
+// get questions by teacher_id
+router.get('/teacher/:teacher_id', (req, res) => {
+    const { teacher_id } = req.params;
+    db.query(`
+        SELECT q.* 
+        FROM question q
+        INNER JOIN teacher_question tq ON q.id = tq.question_id
+        WHERE tq.teacher_id = ?
+    `, [teacher_id], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        res.json(results);
+    });
+});
+
 module.exports = router;

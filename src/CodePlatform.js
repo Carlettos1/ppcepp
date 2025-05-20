@@ -8,14 +8,28 @@ const API_IP = process.env.REACT_APP_API_IP;
 const CodePlatform = ({test, question_id}) => {
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
+  const [plotData, setPlotData] = useState(null);
+  const [isExecuting, setIsExecuting] = useState(false);
 
   const executeCode = async () => {
+    if (isExecuting) return;
+    
+    setIsExecuting(true);
     try {
       const response = await axios.post(`${API_IP}/execute`, { code, question_id });
       setOutput(response.data.output);
+      if (response.data.plot) {
+        setPlotData(response.data.plot);
+      }
     } catch (error) {
       setOutput("Error Executing Code: " + error.message);
+      setPlotData(null);
     }
+    
+    // Set a 1 second cooldown
+    setTimeout(() => {
+      setIsExecuting(false);
+    }, 1000);
   }
 
   useEffect(() => {
@@ -34,11 +48,15 @@ const CodePlatform = ({test, question_id}) => {
   return (
     <div class="block">
       <CodeEditor code={code} setCode={handleSave} test={test} question_id={question_id}/>
-      <button class="block button is-link" onClick={executeCode}>
+      <button 
+        class={`block button is-link ${isExecuting ? 'is-loading' : ''}`} 
+        onClick={executeCode}
+        disabled={isExecuting}
+      >
         Correr Código
       </button>
       <div class="block">
-        <Output output={output}/>
+        <Output output={output} plotData={plotData}/>
       </div>
     </div>
   );
