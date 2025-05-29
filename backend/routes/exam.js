@@ -17,12 +17,31 @@ router.get('/', (req, res) => {
             if (err) {
                 return res.status(500).json({ error: 'Internal server error' });
             }
+            // get user teacher id
+            db.query('SELECT teacher_id FROM users WHERE id = ?', [user.id], (err, teacherResults) => {
+                if (err) {
+                    return res.status(500).json({ error: 'Internal server error' });
+                }
+                const teacherId = teacherResults[0]?.teacher_id;
 
-            if (results.length === 0) {
-                res.json({ submitted: false });
-            } else {
-                res.json({ submitted: true });
-            }
+                // get all assigned questions for the teacher
+                db.query('SELECT question_id FROM teacher_question WHERE teacher_id = ?', [teacherId], (err, assignedQuestions) => {
+                    if (err) {
+                        return res.status(500).json({ error: 'Internal server error' });
+                    }
+
+                    // filter results to only include submitted answers that are in the assigned questions
+                    const submittedAnswers = results.filter(answer => 
+                        assignedQuestions.some(q => q.question_id === answer.question_id)
+                    );
+
+                    if (submittedAnswers.length > 0) {
+                        res.json({ submitted: true, answers: submittedAnswers });
+                    } else {
+                        res.json({ submitted: false, answers: [] });
+                    }
+                });
+            });
         });
     });
 });
