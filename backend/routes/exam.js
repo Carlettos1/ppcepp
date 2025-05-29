@@ -26,6 +26,7 @@ router.get('/', (req, res) => {
                 // teacherResults = {teacher}
                 console.log("teacherResults: ", teacherResults);
                 const teacherId = teacherResults.teacher;
+                console.log("Teacher ID: ", teacherId);
 
                 // get all assigned questions for the teacher
                 db.query('SELECT question_id FROM teacher_question WHERE teacher_id = ?', [teacherId], (err, assignedQuestions) => {
