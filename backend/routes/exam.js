@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
                 }
                 // teacherResults = {teacher}
                 console.log("teacherResults: ", teacherResults);
-                const teacherId = teacherResults.teacher;
+                const teacherId = teacherResults[0].teacher;
                 console.log("Teacher ID: ", teacherId);
 
                 // get all assigned questions for the teacher
