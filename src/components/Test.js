@@ -40,6 +40,10 @@ const Test = () => {
     }, [user]);
 
     const onDeliver = async (event) => {
+        const confirmSubmission = window.confirm("¿Estás seguro de que deseas entregar la evaluación?");
+        if (!confirmSubmission) {
+            return; // Exit if the user cancels
+        }
         let editors = document.querySelectorAll(".ace_editor");
         editors.forEach((editor) => {
             if (editor.id === "practica") {

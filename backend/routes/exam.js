@@ -24,9 +24,7 @@ router.get('/', (req, res) => {
                     return res.status(500).json({ error: 'Internal server error' });
                 }
                 // teacherResults = {teacher}
-                console.log("teacherResults: ", teacherResults);
                 const teacherId = teacherResults[0].teacher;
-                console.log("Teacher ID: ", teacherId);
 
                 // get all assigned questions for the teacher
                 db.query('SELECT question_id FROM teacher_question WHERE teacher_id = ?', [teacherId], (err, assignedQuestions) => {
@@ -34,7 +32,6 @@ router.get('/', (req, res) => {
                         return res.status(500).json({ error: 'Internal server error' });
                     }
                     // assignedQuestions = [{question_id}, {question_id}, ...]
-                    console.log("Assigned questions: ", assignedQuestions);
 
                     // filter results to only include submitted answers that are in the assigned questions
                     const submittedAnswers = results.filter(answer => 
