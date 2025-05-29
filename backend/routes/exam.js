@@ -24,6 +24,7 @@ router.get('/', (req, res) => {
                     return res.status(500).json({ error: 'Internal server error' });
                 }
                 // teacherResults = {teacher}
+                console.log("teacherResults: ", teacherResults);
                 const teacherId = teacherResults.teacher;
 
                 // get all assigned questions for the teacher
