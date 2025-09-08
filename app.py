@@ -9,6 +9,7 @@ import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
 
+image_name = "python-code-runner12:latest"
 app = Flask(__name__)
 CORS(app)
 
@@ -17,13 +18,13 @@ timeout = 10  # seconds
 
 # Build the custom image if it doesn't exist
 try:
-    client.images.get('python-code-runner:latest')
+    client.images.get(image_name)
 except docker.errors.ImageNotFound:
     print("Building custom Python image...")
     client.images.build(
         path='./backend',
-        tag='python-code-runner:latest',
-        dockerfile='Dockerfile'
+        tag=image_name,
+        dockerfile='Dockerfile',
     )
 
 @app.route("/execute", methods=["POST"])
@@ -63,7 +64,7 @@ if plt.get_fignums():
 """.format(code)
 
         container = client.containers.run(
-            "python-code-runner:latest",
+            image_name,
             name=container_name,
             command=f"timeout {timeout}s python3 -c \"{plot_code.replace('"', '\\"')}\"",
             detach=True,

@@ -100,8 +100,9 @@ router.put('/:id', (req, res) => {
 router.get("/teacher/:id", (req, res) => {
     const { id } = req.params;
     //db.query("SELECT answer.id AS answer_id, answer.question_id, answer.user_id, users.username, answer.answer, answer.grade FROM answer JOIN users ON answer.user_id = users.id WHERE users.teacher = ?", [id], (err, results) => {
-    db.query("SELECT answer.id, users.username as user_name, question.title as question, answer.answer as answer, answer.grade as grade FROM answer INNER JOIN users ON answer.user_id = users.id INNER JOIN question ON answer.question_id = question.id WHERE users.teacher = ? ORDER BY users.id DESC", [id], (err, results) => {
+    db.query("SELECT answer.id, users.username as user_name, question.title as question, answer.answer as answer, answer.grade as grade FROM answer INNER JOIN users ON answer.user_id = users.id INNER JOIN question ON answer.question_id = question.id INNER JOIN teacher_question ON question.id = teacher_question.question_id WHERE teacher_question.teacher_id = ? AND users.teacher = ? ORDER BY users.id DESC", [id, id], (err, results) => {
         if (err) {
+            console.log("Error:" + err);
             return res.status(500).json({ error: 'Internal server error' });
         }
         res.json(results);
