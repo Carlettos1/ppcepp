@@ -48,10 +48,12 @@ const Test = () => {
         editors.forEach((editor) => {
             if (editor.id === "practica") {
                 const question_id = editor.parentElement.attributes[1].value;
-                console.log(question_id + " - " + editor.childNodes[2].innerText);
+                const ace_instance = ace.edit(editor);
+                const content = ace_instance.getValue();
+                console.log(question_id + " - " + content);
                 axios.post(`${API_IP}/exam`, {
                     question_id: question_id,
-                    answer: editor.childNodes[2].innerText
+                    answer: content
                 }, {
                     headers: {
                         Authorization: `${localStorage.getItem('authToken')}`
