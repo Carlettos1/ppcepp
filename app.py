@@ -9,7 +9,7 @@ import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
 
-image_name = "python-code-runner12:latest"
+image_name = "python-code-runner13:latest"
 app = Flask(__name__)
 CORS(app)
 

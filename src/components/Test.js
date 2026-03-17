@@ -4,6 +4,7 @@ import CodePlatform from '../CodePlatform';
 import Question from './Question';
 import useVerify from '../Verify';
 import useUser from '../User';
+import ace from "ace-builds/src-noconflict/ace";
 const API_IP = process.env.REACT_APP_API_IP;
 
 const Test = () => {

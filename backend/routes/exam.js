@@ -58,6 +58,7 @@ router.post('/', (req, res) => {
         if (err) return res.status(403).json({ error: 'Forbidden' });
         console.log("Entregando prueba de: " + user.id + ": " + req.body);
         const { question_id, answer } = req.body;
+        console.log(answer);
         db.query('INSERT INTO answer (question_id, user_id, answer) VALUES (?, ?, ?)', [question_id, user.id, answer], (err, results) => {
             if (err) {
                 console.error(user.id + ": " + err);
