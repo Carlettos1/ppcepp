@@ -9,8 +9,6 @@ const examRoutes = require('./routes/exam');
 const executeRoutes = require('./routes/execute');
 const userRoutes = require("./routes/user");
 const examTimeRoutes = require("./routes/exam_time");
-const process = require('process');
-const argv = process.argv[2];
 const PORT = 5001;
 const app = express();
 const teacherQuestionRouter = require('./routes/teacher_question');
@@ -27,18 +25,4 @@ app.use("/user", userRoutes);
 app.use('/teacher-question', teacherQuestionRouter);
 app.use("/exam-time", examTimeRoutes);
 
-if (argv == "dev") {
-	app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-} else if (argv == "prod") {
-	const https = require("https");
-	const fs = require("fs");
-	const cert = fs.readFileSync("/etc/letsencrypt/live/codetrack.cl/cert.pem");
-	const pkey = fs.readFileSync("/etc/letsencrypt/live/codetrack.cl/privkey.pem");
-	https.createServer({
-		cert: cert,
-		key: pkey
-	}, app).listen(PORT, () => console.log(`Server running on https://localhost:${PORT}`));
-} else {
-	console.log("Invalid argument. Use 'dev' or 'prod'");
-	process.exit();
-}
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
