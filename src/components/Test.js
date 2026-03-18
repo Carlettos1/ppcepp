@@ -27,8 +27,18 @@ const Test = () => {
                 .catch((error) => {
                     console.error(error);
                 });
-        } else if (user?.isAdmin) {
-            // Admin - get all questions
+        } else if (user?.role === "1") {
+            // teacher - get their questions
+            axios.get(`${API_IP}/question/teacher/${user.id}`)
+                .then((response) => {
+                    setQuestions(response.data);
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else if (user?.role === "2") {
+            // admin - get all questoins
             axios.get(`${API_IP}/question/all`)
                 .then((response) => {
                     setQuestions(response.data);

@@ -1,23 +1,29 @@
+import 'katex/dist/katex.min.css';
+import Markdown from "react-markdown";
 import CodePlatform from "../CodePlatform";
 import CodeExample from "./CodeExample";
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
-const Question = ({title, question, example, test, question_id}) => {
+const Question = ({ title, question, example, test, question_id }) => {
     return (
-    <div class="block">
-        <div class="columns">
-            <div class="column is-2"></div>
-            <div class="column is-8">
-                <div class="content box">
-                    <h1>{title}</h1>
-                    <p style={{whiteSpace: "pre-line"}}>{question}</p>
-                    <CodeExample code={example}/>
+        <div class="block">
+            <div class="columns">
+                <div class="column is-2"></div>
+                <div class="column is-8">
+                    <div class="content box">
+                        <h1>{title}</h1>
+                        <Markdown
+                            remarkPlugins={[remarkMath]}
+                            rehypePlugins={[rehypeKatex]}>{question}</Markdown>
+                        <CodeExample code={example} />
+                    </div>
+                    <CodePlatform test={test} question_id={question_id} />
                 </div>
-                <CodePlatform test={test} question_id={question_id}/>
+                <div class="column is-2"></div>
             </div>
-            <div class="column is-2"></div>
-        </div>
-        <hr class="block" style={{"height": "2px"}}/>
-    </div>);
+            <hr class="block" style={{ "height": "2px" }} />
+        </div>);
 };
 
 export default Question;
