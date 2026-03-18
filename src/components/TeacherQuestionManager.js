@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import useVerify from '../Verify';
 import SinPermisos from './SinPermisos';
 import useUser from '../User';
 const API_IP = process.env.REACT_APP_API_IP;
@@ -14,7 +13,7 @@ const TeacherQuestionManager = () => {
     // Get current assignments
     React.useEffect(() => {
         if (!isAdmin) return;
-        
+
         axios.get(`${API_IP}/question/teacher/${user.id}`)
             .then((response) => {
                 setAssignments(response.data);
@@ -45,42 +44,42 @@ const TeacherQuestionManager = () => {
             teacher_id: user.id,
             question_id: questionId
         })
-        .then((response) => {
-            // Add to assignments
-            const question = allQuestions.find(q => q.id === questionId);
-            setAssignments(prev => [...prev, question]);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+            .then((response) => {
+                // Add to assignments
+                const question = allQuestions.find(q => q.id === questionId);
+                setAssignments(prev => [...prev, question]);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
     const onUnassign = (questionId) => {
         axios.delete(`${API_IP}/teacher-question/${user.id}/${questionId}`)
-        .then((response) => {
-            // Remove from assignments
-            setAssignments(prev => prev.filter(q => q.id !== questionId));
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+            .then((response) => {
+                // Remove from assignments
+                setAssignments(prev => prev.filter(q => q.id !== questionId));
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
     if (!isAdmin) {
-        return <SinPermisos/>;
+        return <SinPermisos />;
     }
 
     return (
         <div className="block">
             <div className="columns">
-                <div className="column"/>
+                <div className="column" />
                 <h1 className="title is-4">Question Assignment Manager</h1>
-                <div className="column"/>
+                <div className="column" />
             </div>
 
             {/* Assigned Questions */}
             <div className="columns">
-                <div className="column"/>
+                <div className="column" />
                 <div className="box column is-8">
                     <h2 className="title is-5">Assigned Questions</h2>
                     <div className="table-container">
@@ -98,7 +97,7 @@ const TeacherQuestionManager = () => {
                                         <td>{question.id}</td>
                                         <td>{question.title}</td>
                                         <td>
-                                            <button 
+                                            <button
                                                 className="button is-danger is-small"
                                                 onClick={() => onUnassign(question.id)}
                                             >
@@ -111,12 +110,12 @@ const TeacherQuestionManager = () => {
                         </table>
                     </div>
                 </div>
-                <div className="column"/>
+                <div className="column" />
             </div>
 
             {/* Available Questions */}
             <div className="columns">
-                <div className="column"/>
+                <div className="column" />
                 <div className="box column is-8">
                     <h2 className="title is-5">Available Questions</h2>
                     <div className="table-container">
@@ -134,7 +133,7 @@ const TeacherQuestionManager = () => {
                                         <td>{question.id}</td>
                                         <td>{question.title}</td>
                                         <td>
-                                            <button 
+                                            <button
                                                 className="button is-success is-small"
                                                 onClick={() => onAssign(question.id)}
                                             >
@@ -147,7 +146,7 @@ const TeacherQuestionManager = () => {
                         </table>
                     </div>
                 </div>
-                <div className="column"/>
+                <div className="column" />
             </div>
         </div>
     );

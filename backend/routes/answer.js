@@ -21,7 +21,7 @@ router.get('/all', (req, res) => {
 });
 
 router.get('/all/named', (req, res) => {
-    db.query('SELECT answer.id, users.username as user_name, question.title as question, answer.answer as answer, answer.grade as grade FROM answer INNER JOIN users ON answer.user_id = users.id INNER JOIN question ON answer.question_id = question.id ORDER BY users.id DESC', (err, results) => {
+    db.query('SELECT answer.id, user.username as user_name, question.title as question, answer.answer as answer, answer.grade as grade FROM answer INNER JOIN user ON answer.user_id = user.id INNER JOIN question ON answer.question_id = question.id ORDER BY user.id DESC', (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Internal server error' });
         }
@@ -99,8 +99,8 @@ router.put('/:id', (req, res) => {
 
 router.get("/teacher/:id", (req, res) => {
     const { id } = req.params;
-    //db.query("SELECT answer.id AS answer_id, answer.question_id, answer.user_id, users.username, answer.answer, answer.grade FROM answer JOIN users ON answer.user_id = users.id WHERE users.teacher = ?", [id], (err, results) => {
-    db.query("SELECT answer.id, users.username as user_name, question.title as question, answer.answer as answer, answer.grade as grade FROM answer INNER JOIN users ON answer.user_id = users.id INNER JOIN question ON answer.question_id = question.id INNER JOIN teacher_question ON question.id = teacher_question.question_id WHERE teacher_question.teacher_id = ? AND users.teacher = ? ORDER BY users.id DESC", [id, id], (err, results) => {
+    //db.query("SELECT answer.id AS answer_id, answer.question_id, answer.user_id, user.username, answer.answer, answer.grade FROM answer JOIN user ON answer.user_id = user.id WHERE user.teacher = ?", [id], (err, results) => {
+    db.query("SELECT answer.id, user.username as user_name, question.title as question, answer.answer as answer, answer.grade as grade FROM answer INNER JOIN user ON answer.user_id = user.id INNER JOIN question ON answer.question_id = question.id INNER JOIN teacher_question ON question.id = teacher_question.question_id WHERE teacher_question.teacher_id = ? AND user.teacher = ? ORDER BY user.id DESC", [id, id], (err, results) => {
         if (err) {
             console.log("Error:" + err);
             return res.status(500).json({ error: 'Internal server error' });

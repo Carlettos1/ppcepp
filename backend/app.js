@@ -8,6 +8,7 @@ const questionRoutes = require('./routes/question');
 const examRoutes = require('./routes/exam');
 const executeRoutes = require('./routes/execute');
 const userRoutes = require("./routes/user");
+const examTimeRoutes = require("./routes/exam_time");
 const process = require('process');
 const argv = process.argv[2];
 const PORT = 5001;
@@ -24,6 +25,7 @@ app.use("/exam", examRoutes);
 app.use("/execute", executeRoutes);
 app.use("/user", userRoutes);
 app.use('/teacher-question', teacherQuestionRouter);
+app.use("/exam-time", examTimeRoutes);
 
 if (argv == "dev") {
 	app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

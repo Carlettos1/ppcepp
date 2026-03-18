@@ -12,20 +12,20 @@ const CheaterLog = () => {
         const interval = setInterval(() => {
             if (parseInt(localStorage.getItem("user_id")) <= 3) { // can see all logs
                 axios.get(`${API_IP}/cheat_log/all/named`)
-                .then((response) => {
-                    setCheatLogs(response.data);
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+                    .then((response) => {
+                        setCheatLogs(response.data);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
             } else {
                 axios.get(`${API_IP}/cheat_log/teacher/${localStorage.getItem("user_id")}`)
-                .then((response) => {
-                    setCheatLogs(response.data);
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+                    .then((response) => {
+                        setCheatLogs(response.data);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
             }
         }, 1000);
 
@@ -33,18 +33,18 @@ const CheaterLog = () => {
     }, []);
 
     if (!isAdmin) {
-        return (<SinPermisos/>);
+        return (<SinPermisos />);
     }
 
     const onDelete = (id) => {
         axios.delete(`${API_IP}/cheat_log/${id}`)
-        .then((response) => {
-            console.log(response.data);
-            setCheatLogs(prev => [...prev.filter(log => log.id !== id)])
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+            .then((response) => {
+                console.log(response.data);
+                setCheatLogs(prev => [...prev.filter(log => log.id !== id)])
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
     return (

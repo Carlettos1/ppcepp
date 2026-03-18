@@ -2,9 +2,9 @@ const mysql = require('mysql');
 
 const dbConfig = {
     host: "127.0.0.1",
-    user: "admin",
-    password: "1234",
-    database: "login_system",
+    user: "pma",
+    password: "pmapass",
+    database: "codetrack",
     connectionLimit: 10,
     waitForConnections: true,
     queueLimit: 0,

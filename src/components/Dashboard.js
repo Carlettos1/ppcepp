@@ -1,11 +1,7 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import useVerify from '../Verify';
-const API_IP = process.env.REACT_APP_API_IP;
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const isAdmin = useVerify();
 
     return (
         <div>

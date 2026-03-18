@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import CodePlatform from '../CodePlatform';
 import Question from './Question';
-import useVerify from '../Verify';
 import useUser from '../User';
 import ace from "ace-builds/src-noconflict/ace";
 const API_IP = process.env.REACT_APP_API_IP;
@@ -13,6 +11,8 @@ const Test = () => {
     const [received, setReceived] = useState(["Recibidos:"]);
     const lastEventRef = useRef(new Date().getTime());
     const user = useUser();
+    const [examTime, setExamTime] = useState(null);
+    const [canSeeExam, setCanSeeExam] = useState(false);
 
     // get questions based on user type
     const [questions, setQuestions] = useState([]);
@@ -79,13 +79,13 @@ const Test = () => {
                 Authorization: `${localStorage.getItem('authToken')}`
             }
         })
-        .then((response) => {
-            console.log(response.data);
-            setSubmitted(response.data.submitted);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+            .then((response) => {
+                console.log(response.data);
+                setSubmitted(response.data.submitted);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }, []);
 
     useEffect(() => {
@@ -101,7 +101,7 @@ const Test = () => {
         const handleBlur = async () => {
             const now = new Date().getTime();
             console.log("Notifying blur");
-      
+
             axios.post(`${API_IP}/cheat_log`, {
                 user_id: localStorage.getItem('user_id'),
                 action: 0,
@@ -109,16 +109,32 @@ const Test = () => {
             });
             lastEventRef.current = now;
         };
-      
+
         window.addEventListener("focus", handleFocus);
         window.addEventListener("blur", handleBlur);
-      
+
         return () => {
-          window.removeEventListener("focus", handleFocus);
-          window.removeEventListener("blur", handleBlur);
+            window.removeEventListener("focus", handleFocus);
+            window.removeEventListener("blur", handleBlur);
         };
     }, []);
-      
+
+    useEffect(() => {
+        if (user?.role) {
+            if (user.role === "2") {
+                // setCanSeeExam(true);
+                // cómo el admin va a ver una prueba? tendría que ver todas, ugh...
+            } else if (user.role === "1") {
+                axios.get(`${API_IP}/exam-time/${user.id}`).then((result) => {
+                    setCanSeeExam(Date.now() > result.data[0].start_time && Date.now() < result.data[0].end_time);
+                });
+            } else {
+                axios.get(`${API_IP}/exam-time/${user.teacher}`).then((result) => {
+                    setCanSeeExam(Date.now() > result.data[0].start_time && Date.now() < result.data[0].end_time);
+                });
+            }
+        }
+    }, [user]);
 
     if (submitted) {
         return (
@@ -134,8 +150,8 @@ const Test = () => {
         );
     }
 
-    if (user?.isAdmin) {
-        return <div>Admin</div>
+    if (!canSeeExam) {
+        return <div class="block">No se pueden ver las preguntas. Consultar con el administrador del sistema.</div>
     }
 
     return (
@@ -147,18 +163,18 @@ const Test = () => {
                 </div>
                 <div class="column"></div>
             </div>
-            <div class="block"/>
-            <hr class="block" style={{"height": "2px"}}/>
+            <div class="block" />
+            <hr class="block" style={{ "height": "2px" }} />
             {questions.map((question) => {
-                    return <Question example={question.example} question={question.question} title={question.title} test={true} question_id={question.id}/>;
-                })}
+                return <Question example={question.example} question={question.question} title={question.title} test={true} question_id={question.id} />;
+            })}
             <div class="columns">
                 <div class="column"></div>
                 <div class="column is-8">
                     <button class={"button is-large is-danger " + (loading ? "is-loading" : "")} onClick={onDeliver}>
                         ENTREGAR
                     </button>
-                    <p>{ received.join(" ") }</p>
+                    <p>{received.join(" ")}</p>
                 </div>
                 <div class="column"></div>
             </div>

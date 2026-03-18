@@ -12,14 +12,14 @@ router.get('/', (req, res) => {
 
     jwt.verify(token, 'your_secret_key', (err, user) => {
         if (err) return res.status(403).json({ error: 'Forbidden' });
-        
+
         db.query('SELECT * FROM answer WHERE user_id = ?', [user.id], (err, results) => {
             if (err) {
                 return res.status(500).json({ error: 'Internal server error' });
             }
             // result = {id, question_id, user_id, answer, grade}
             // get user teacher id
-            db.query('SELECT teacher FROM users WHERE id = ?', [user.id], (err, teacherResults) => {
+            db.query('SELECT teacher FROM user WHERE id = ?', [user.id], (err, teacherResults) => {
                 if (err) {
                     return res.status(500).json({ error: 'Internal server error' });
                 }
@@ -34,7 +34,7 @@ router.get('/', (req, res) => {
                     // assignedQuestions = [{question_id}, {question_id}, ...]
 
                     // filter results to only include submitted answers that are in the assigned questions
-                    const submittedAnswers = results.filter(answer => 
+                    const submittedAnswers = results.filter(answer =>
                         assignedQuestions.some(q => q.question_id === answer.question_id)
                     );
 
