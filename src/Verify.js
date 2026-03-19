@@ -14,17 +14,17 @@ const useVerify = () => {
                 Authorization: `${localStorage.getItem('authToken')}`
             }
         })
-        .then((response) => {
-            if (response.data.role) {
-                console.log("Admin");
-                setIsAdmin(true);
-            } else {
-                console.log(response.data.message);
-            }
-        })
-        .catch(() => {
-            navigate("/");
-        });
+            .then((response) => {
+                if (response.data?.role !== "0") {
+                    console.log("Admin");
+                    setIsAdmin(true);
+                } else {
+                    console.log(response.data.message);
+                }
+            })
+            .catch(() => {
+                navigate("/");
+            });
     }, [navigate]);
 
     return isAdmin;
