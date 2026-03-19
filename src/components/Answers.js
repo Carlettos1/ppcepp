@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import CodeExample from './CodeExample';
 import SinPermisos from './SinPermisos';
+import useUser from '../User';
 const API_IP = process.env.REACT_APP_API_IP;
 
 const Answers = () => {
