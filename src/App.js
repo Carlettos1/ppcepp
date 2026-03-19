@@ -9,11 +9,11 @@ import QuestionManager from './components/QuestionManager';
 import CheaterLog from "./components/CheaterLog";
 import { Link } from 'react-router-dom';
 import Answers from './components/Answers';
-import useVerify from './Verify';
 import TeacherQuestionManager from './components/TeacherQuestionManager';
 import ExamTime from "./components/ExamTime";
 import MassRegister from './components/MassRegister';
 import { useState } from 'react';
+import useUser from './User';
 const API_IP = process.env.REACT_APP_API_IP;
 console.log(API_IP);
 
@@ -54,7 +54,7 @@ const App = () => {
 
 const Header = () => {
     const [isActive, setIsActive] = useState(false);
-    const isAdmin = useVerify();
+    const user = useUser();
     return (
         <nav className="navbar" role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
@@ -71,7 +71,7 @@ const Header = () => {
                     <Link to="/test" className="navbar-item">Prueba</Link>
                     <Link to="/dashboard" className="navbar-item">Dashboard</Link>
                     <Link to="/playground" className="navbar-item">Playground</Link>
-                    {isAdmin && (
+                    {user?.isAdmin && (
                         <div class="navbar-item has-dropdown is-hoverable">
                             <div class="navbar-link">Admin</div>
                             <div class="navbar-dropdown">

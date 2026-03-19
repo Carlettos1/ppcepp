@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import useVerify from '../Verify';
 import SinPermisos from './SinPermisos';
 import useUser from '../User';
 const API_IP = process.env.REACT_APP_API_IP;

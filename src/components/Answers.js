@@ -1,14 +1,12 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import CodeExample from './CodeExample';
-import useVerify from '../Verify';
 import SinPermisos from './SinPermisos';
 const API_IP = process.env.REACT_APP_API_IP;
 
 const Answers = () => {
     const [answers, setAnswers] = useState([]);
     const user = useUser();
-    const isAdmin = useVerify();
 
     useEffect(() => {
         if (parseInt(localStorage.getItem("user_id")) <= 3) { // can see all answers
@@ -30,7 +28,7 @@ const Answers = () => {
         }
     }, []);
 
-    if (!isAdmin) {
+    if (!user?.isAdmin) {
         return (<SinPermisos />);
     }
 
