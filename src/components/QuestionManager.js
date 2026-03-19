@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import useVerify from '../Verify';
 import SinPermisos from './SinPermisos';
+import useUser from '../User';
 const API_IP = process.env.REACT_APP_API_IP;
 /* question architecture:
     id: int
@@ -15,7 +16,7 @@ const API_IP = process.env.REACT_APP_API_IP;
 
 const QuestionManager = () => {
     const [questions, setQuestions] = React.useState([]);
-    const isAdmin = useVerify();
+    const user = useUser();
     React.useEffect(() => {
         axios.get(`${API_IP}/question/all`)
             .then((response) => {
@@ -26,7 +27,7 @@ const QuestionManager = () => {
                 console.error(error);
             });
     }, []);
-    
+
     const onSubmit = () => {
         const title = document.querySelector('input[placeholder="Title"]').value;
         const question = document.querySelector('textarea[placeholder="Question"]').value;
@@ -38,46 +39,44 @@ const QuestionManager = () => {
             example: example,
             prepend: prepend
         })
-        .then((response) => {
-            console.log(response.data);
-            setQuestions(prev => [...prev, response.data]);
-            alert("Question created");
-            document.querySelector('input[placeholder="Title"]').value = "";
-            document.querySelector('textarea[placeholder="Question"]').value = "";
-            document.querySelector('textarea[placeholder="Example"]').value = "";
-            document.querySelector('textarea[placeholder="Prepend"]').value = "";
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+            .then((response) => {
+                console.log(response.data);
+                setQuestions(prev => [...prev, response.data]);
+                alert("Question created");
+                document.querySelector('input[placeholder="Title"]').value = "";
+                document.querySelector('textarea[placeholder="Question"]').value = "";
+                document.querySelector('textarea[placeholder="Example"]').value = "";
+                document.querySelector('textarea[placeholder="Prepend"]').value = "";
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     const onDelete = (id) => {
         axios.delete(`${API_IP}/question/` + id)
-        .then((response) => {
-            console.log(response.data);
-            setQuestions(prev => [...prev.filter(question => question.id !== id)]);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+            .then((response) => {
+                console.log(response.data);
+                setQuestions(prev => [...prev.filter(question => question.id !== id)]);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
-    if (!isAdmin) {
-        return (
-            <SinPermisos/>
-        );
+    if (!user?.isAdmin) {
+        return <SinPermisos />
     }
-    
+
     return (
         <div class="block">
             <div class="columns">
-                <div class="column"/>
+                <div class="column" />
                 <h1 class="title is-4">Question Manager</h1>
-                <div class="column"/>
+                <div class="column" />
             </div>
             <div class="columns">
-                <div class="column"/>
+                <div class="column" />
                 <div class="box column is-8">
                     <h1 class="title is-5">Create a question</h1>
                     <div class="field">
@@ -110,13 +109,13 @@ const QuestionManager = () => {
                         </div>
                     </div>
                 </div>
-                <div class="column"/>
+                <div class="column" />
             </div>
             <div class="block">
                 <div>
                     {questions.map((question) => {
                         return (
-                            <ShowableQuestion key={question.id} title={question.title} question={question.question} example={question.example} prepend={question.prepend} id={question.id} onDelete={onDelete}/>
+                            <ShowableQuestion key={question.id} title={question.title} question={question.question} example={question.example} prepend={question.prepend} id={question.id} onDelete={onDelete} />
                         );
                     })}
                 </div>
@@ -125,35 +124,35 @@ const QuestionManager = () => {
     );
 }
 
-const ShowableQuestion = ({title, question, example, prepend, id, onDelete}) => {
+const ShowableQuestion = ({ title, question, example, prepend, id, onDelete }) => {
     const [show, setShow] = React.useState(false);
     const onClick = () => {
         setShow(!show);
     }
     const onEdit = () => {
-        const title = document.querySelector('textarea[placeholder="Title'+id+'"]').value;
-        const question = document.querySelector('textarea[placeholder="Question'+id+'"]').value;
-        const example = document.querySelector('textarea[placeholder="Example'+id+'"]').value;
-        const prepend = document.querySelector('textarea[placeholder="Prepend'+id+'"]').value;
+        const title = document.querySelector('textarea[placeholder="Title' + id + '"]').value;
+        const question = document.querySelector('textarea[placeholder="Question' + id + '"]').value;
+        const example = document.querySelector('textarea[placeholder="Example' + id + '"]').value;
+        const prepend = document.querySelector('textarea[placeholder="Prepend' + id + '"]').value;
         axios.put(`${API_IP}/question/` + id, {
             title: title,
             question: question,
             example: example,
             prepend: prepend
         })
-        .then((response) => {
-            console.log(response.data);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+            .then((response) => {
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
     let reducedTitle = title.length > 20 ? title.substring(0, 20) + "..." : title;
     return (
         <div class="block">
             <div>
                 <div class="columns">
-                    <div class="column"/>
+                    <div class="column" />
                     <div class="column is-8">
                         <div class="box">
                             <div class="columns">
@@ -173,12 +172,12 @@ const ShowableQuestion = ({title, question, example, prepend, id, onDelete}) => 
                             </div>
                         </div>
                     </div>
-                    <div class="column"/>
+                    <div class="column" />
                 </div>
             </div>
             <div>
                 {show ? (
-                    <EditableQuestion title={title} question={question} example={example} prepend={prepend} test={false} id={id}/>
+                    <EditableQuestion title={title} question={question} example={example} prepend={prepend} test={false} id={id} />
                 ) : (
                     <></>
                 )}
@@ -187,42 +186,42 @@ const ShowableQuestion = ({title, question, example, prepend, id, onDelete}) => 
     );
 }
 
-const EditableQuestion = ({title, question, example, prepend, id}) => {
-    return (    
-    <div class="block">
-        <div class="columns">
-            <div class="column is-2"></div>
-            <div class="column is-8">
-                <div class="content box">
-                    <div class="field">
-                        <label class="label">Title</label>
-                        <div class="control">
-                            <textarea class="input" placeholder={"Title"+id}>{title}</textarea>
+const EditableQuestion = ({ title, question, example, prepend, id }) => {
+    return (
+        <div class="block">
+            <div class="columns">
+                <div class="column is-2"></div>
+                <div class="column is-8">
+                    <div class="content box">
+                        <div class="field">
+                            <label class="label">Title</label>
+                            <div class="control">
+                                <textarea class="input" placeholder={"Title" + id}>{title}</textarea>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Question</label>
-                        <div class="control">
-                            <textarea class="textarea" placeholder={"Question"+id}>{question}</textarea>
+                        <div class="field">
+                            <label class="label">Question</label>
+                            <div class="control">
+                                <textarea class="textarea" placeholder={"Question" + id}>{question}</textarea>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Example</label>
-                        <div class="control">
-                            <textarea class="textarea" placeholder={"Example"+id}>{example}</textarea>
+                        <div class="field">
+                            <label class="label">Example</label>
+                            <div class="control">
+                                <textarea class="textarea" placeholder={"Example" + id}>{example}</textarea>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Prepend</label>
-                        <div class="control">
-                            <textarea class="textarea" placeholder={"Prepend"+id}>{prepend}</textarea>
+                        <div class="field">
+                            <label class="label">Prepend</label>
+                            <div class="control">
+                                <textarea class="textarea" placeholder={"Prepend" + id}>{prepend}</textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="column is-2"></div>
             </div>
-            <div class="column is-2"></div>
         </div>
-    </div>
     );
 }
 

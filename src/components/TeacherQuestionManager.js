@@ -65,8 +65,8 @@ const TeacherQuestionManager = () => {
             });
     };
 
-    if (!isAdmin) {
-        return <SinPermisos />;
+    if (!user?.isAdmin) {
+        return <SinPermisos />
     }
 
     return (

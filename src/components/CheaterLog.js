@@ -6,7 +6,7 @@ const API_IP = process.env.REACT_APP_API_IP;
 
 const CheaterLog = () => {
     const [cheatLogs, setCheatLogs] = useState([]);
-    const isAdmin = useVerify();
+    const user = useUser();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -32,8 +32,8 @@ const CheaterLog = () => {
         return () => clearInterval(interval);
     }, []);
 
-    if (!isAdmin) {
-        return (<SinPermisos />);
+    if (!user?.isAdmin) {
+        return <SinPermisos />
     }
 
     const onDelete = (id) => {

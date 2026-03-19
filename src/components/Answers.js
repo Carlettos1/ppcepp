@@ -7,41 +7,42 @@ const API_IP = process.env.REACT_APP_API_IP;
 
 const Answers = () => {
     const [answers, setAnswers] = useState([]);
+    const user = useUser();
     const isAdmin = useVerify();
 
     useEffect(() => {
         if (parseInt(localStorage.getItem("user_id")) <= 3) { // can see all answers
             axios.get(`${API_IP}/answer/all/named`)
-            .then((response) => {
-                setAnswers(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+                .then((response) => {
+                    setAnswers(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         } else { // can see only their student answers
             axios.get(`${API_IP}/answer/teacher/${localStorage.getItem("user_id")}`)
-            .then((response) => {
-                setAnswers(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+                .then((response) => {
+                    setAnswers(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         }
     }, []);
 
     if (!isAdmin) {
-        return (<SinPermisos/>);
+        return (<SinPermisos />);
     }
 
     const onDelete = (id) => {
         axios.delete(`${API_IP}/answer/${id}`)
-        .then((response) => {
-            console.log(response.data);
-            setAnswers(prev => [...prev.filter(answer => answer.id !== id)]);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+            .then((response) => {
+                console.log(response.data);
+                setAnswers(prev => [...prev.filter(answer => answer.id !== id)]);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
     const onGrade = (id, grade) => {
@@ -64,14 +65,18 @@ const Answers = () => {
             return;
         }
         axios.put(`${API_IP}/answer/${id}`, { grade })
-        .then((response) => {
-            console.log(response.data);
-            setAnswers(prev => [...prev.map(answer => answer.id === id ? { ...answer, grade } : answer)]);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+            .then((response) => {
+                console.log(response.data);
+                setAnswers(prev => [...prev.map(answer => answer.id === id ? { ...answer, grade } : answer)]);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
+
+    if (!user?.isAdmin) {
+        return <SinPermisos />
+    }
 
     return (
         <div class="table-container">
@@ -101,7 +106,7 @@ const Answers = () => {
                             <td class="is-narrow">{answer.user_name}</td>
                             <td class="is-narrow">{answer.question ? (answer.question.length > 20 ? answer.question.substring(0, 20) + "..." : answer.question) : "¿?"}</td>
                             <td class="is-narrow"><input class={parseFloat(answer.grade) ? "input is-primary" : "input is-danger"} defaultValue={answer.grade} onChange={(e) => onGrade(answer.id, e.target.value)}></input></td>
-                            <td><CodeExample code={answer.answer}/></td>
+                            <td><CodeExample code={answer.answer} /></td>
                         </tr>
                     ))}
                 </tbody>
