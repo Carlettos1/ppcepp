@@ -53,7 +53,11 @@ const Test = () => {
     const onDeliver = async (event) => {
         const confirmSubmission = window.confirm("¿Estás seguro de que deseas entregar la evaluación?");
         if (!confirmSubmission) {
-            return; // Exit if the user cancels
+            return;
+        }
+        const doubleConfirm = window.confirm("No podrás modificar nada una vez entregado, ¿Continuar?")
+        if (!doubleConfirm) {
+            return;
         }
         let editors = document.querySelectorAll(".ace_editor");
         editors.forEach((editor) => {
@@ -62,7 +66,7 @@ const Test = () => {
                 const ace_instance = ace.edit(editor);
                 const content = ace_instance.getValue();
                 console.log(question_id + " - " + content);
-                axios.post(`${API_IP}/exam`, {
+                axios.post(`${API_IP}/exam/submit`, {
                     question_id: question_id,
                     answer: content
                 }, {
@@ -144,6 +148,34 @@ const Test = () => {
                 });
             }
         }
+    }, [user]);
+
+    // autosave
+    useEffect(() => {
+        const interval = setInterval(() => {
+            console.log("autosaving...");
+            let editors = document.querySelectorAll(".ace_editor");
+            editors.forEach((editor) => {
+                if (editor.id === "practica") {
+                    const question_id = editor.parentElement.attributes[1].value;
+                    const ace_instance = ace.edit(editor);
+                    const content = ace_instance.getValue();
+                    console.log("autosaving: " + question_id + " - " + content);
+                    axios.post(`${API_IP}/exam/autosave`, {
+                        question_id: question_id,
+                        answer: content
+                    }, {
+                        headers: {
+                            Authorization: `${localStorage.getItem('authToken')}`
+                        }
+                    }).then((r) => {
+                        console.log("se ha autoguardado: " + question_id);
+                    });
+                }
+            });
+        }, 60 * 1000);
+
+        return () => clearInterval(interval);
     }, [user]);
 
     if (submitted) {
