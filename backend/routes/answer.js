@@ -6,6 +6,7 @@ const db = require('../config/db');
     user_id: int,
     answer: string
     grade: float
+    submitted: bool (tinyint(1))
 */
 
 const router = express.Router();
@@ -21,7 +22,7 @@ router.get('/all', (req, res) => {
 });
 
 router.get('/all/named', (req, res) => {
-    db.query('SELECT answer.id, user.username as user_name, question.title as question, answer.answer as answer, answer.grade as grade FROM answer INNER JOIN user ON answer.user_id = user.id INNER JOIN question ON answer.question_id = question.id ORDER BY user.id DESC', (err, results) => {
+    db.query('SELECT answer.id, user.username as user_name, question.title as question, answer.answer as answer, answer.grade as grade, answer.submitted as submitted FROM answer INNER JOIN user ON answer.user_id = user.id INNER JOIN question ON answer.question_id = question.id ORDER BY user.id DESC', (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Internal server error' });
         }
@@ -60,17 +61,6 @@ router.get('/question/:id', (req, res) => {
             return res.status(500).json({ error: 'Internal server error' });
         }
         res.json(results);
-    });
-});
-
-// create answer
-router.post('/', (req, res) => {
-    const { question_id, user_id, answer } = req.body;
-    db.query('INSERT INTO answer (question_id, user_id, answer) VALUES (?, ?, ?)', [question_id, user_id, answer], (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: 'Internal server error' });
-        }
-        res.json({ message: 'Answer created' });
     });
 });
 

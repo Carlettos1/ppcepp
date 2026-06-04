@@ -35,7 +35,7 @@ router.get('/', (req, res) => {
 
                     // filter results to only include submitted answers that are in the assigned questions
                     const submittedAnswers = results.filter(answer =>
-                        assignedQuestions.some(q => q.question_id === answer.question_id)
+                        assignedQuestions.some(q => q.question_id === answer.question_id && answer.submitted)
                     );
 
                     if (submittedAnswers.length > 0) {
@@ -50,21 +50,122 @@ router.get('/', (req, res) => {
 });
 
 /// Submit the answer using the auth token
-router.post('/', (req, res) => {
+router.post('/submit', (req, res) => {
     const token = req.headers['authorization'];
     if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
     jwt.verify(token, 'your_secret_key', (err, user) => {
         if (err) return res.status(403).json({ error: 'Forbidden' });
-        console.log("Entregando prueba de: " + user.id + ": " + req.body);
         const { question_id, answer } = req.body;
-        console.log(answer);
-        db.query('INSERT INTO answer (question_id, user_id, answer) VALUES (?, ?, ?)', [question_id, user.id, answer], (err, results) => {
-            if (err) {
-                console.error(user.id + ": " + err);
+        console.log("Entregando prueba de: " + user.id + ": " + question_id);
+        db.query("SELECT id, submitted FROM answer WHERE question_id = ? AND user_id = ?", [question_id, user.id], (err1, res1) => {
+            if (err1) {
+                console.error("Error al entregar la prueba de " + user.id + ": " + err);
+                console.log(answer);
                 return res.status(500).json({ error: 'Internal server error' });
             }
-            res.json({ message: 'Answer submitted successfully' });
+
+            // no other just insert.
+            if (res1.length === 0) {
+                db.query('INSERT INTO answer (question_id, user_id, answer, submitted) VALUES (?, ?, ?, ?)', [question_id, user.id, answer, 1], (err, results) => {
+                    if (err) {
+                        console.error("Error al entregar la prueba de " + user.id + ": " + err);
+                        console.log(answer);
+                        return res.status(500).json({ error: 'Internal server error' });
+                    }
+                    return res.json({ message: 'Answer submitted successfully' });
+                });
+            } else {
+                const first = res1[0];
+
+                if (first.submitted) {
+                    // Already submitted, response with error.
+                    return res.status(409).json({ error: 'Answer already submitted' });
+                }
+
+                // update existing non-submitted answer with provided text
+                db.query(
+                    "UPDATE answer SET answer = ?, submitted = 1 WHERE id = ?",
+                    [answer, first.id],
+                    (err2) => {
+                        if (err2) {
+                            console.error("Error al entregar la prueba de " + user.id + ": " + err);
+                            console.log(answer);
+                            return res.status(500).json({ error: 'Internal server error' });
+                        }
+                        return res.json({ message: 'Answer submitted successfully' });
+                    }
+                );
+            }
+        });
+    });
+});
+
+/// Autosave the answer using the auth token
+router.post('/autosave', (req, res) => {
+    const token = req.headers['authorization'];
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+
+    jwt.verify(token, 'your_secret_key', (err, user) => {
+        if (err) return res.status(403).json({ error: 'Forbidden' });
+        const { question_id, answer } = req.body;
+
+        db.query("SELECT id, submitted FROM answer WHERE question_id = ? AND user_id = ?", [question_id, user.id], (err1, res1) => {
+            if (err1) {
+                console.error("Autosave error for user " + user.id + ": " + err1);
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+
+            if (res1.length === 0) {
+                // no question_id, user_id, create one.
+                db.query(
+                    "INSERT INTO answer (question_id, user_id, answer) VALUES (?, ?, ?)",
+                    [question_id, user.id, answer],
+                    (err2, res2) => {
+                        if (err2) {
+                            console.error(`Autosave INSERT error for user ${user.id}:`, err2);
+                            return res.status(500).json({ error: 'Internal server error' });
+                        }
+
+                        return res.json({
+                            success: true,
+                            id: res2.insertId,
+                            created: true
+                        });
+                    }
+                );
+            } else {
+                // treat first as unique, log if more than 1
+                if (res1.length > 1) {
+                    console.warn(
+                        `Autosave SELECT returned ${res1.length} rows for question_id=${question_id}, user_id=${user.id}`
+                    );
+                }
+                const first = res1[0];
+
+                if (first.submitted) {
+                    // Already submitted, response with error-non-error.
+                    return res.json({ error: 'Answer already submitted' });
+                }
+
+                // update existing non-submitted answer with provided text
+                db.query(
+                    "UPDATE answer SET answer = ? WHERE id = ?",
+                    [answer, first.id],
+                    (err2) => {
+                        if (err2) {
+                            console.error(`Autosave UPDATE error for user ${user.id}:`, err2);
+                            return res.status(500).json({ error: 'Internal server error' });
+                        }
+
+                        return res.json({
+                            success: true,
+                            id: first.id,
+                            updated: true
+                        });
+                    }
+                );
+            }
         });
     });
 });
