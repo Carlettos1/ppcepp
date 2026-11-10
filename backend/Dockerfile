@@ -5,11 +5,14 @@ RUN pip install matplotlib numpy pandas scipy
 
 WORKDIR /app
 
+COPY catalogo_estrellas_s3.csv .
 COPY stars_brightness.csv .
 COPY exoplanets_full.csv .
 COPY nearby_stars.csv .
 COPY temp_santiago.csv .
 COPY temp_ciudad_2024.csv .
+COPY estrellas.csv .
+COPY planets.csv .
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 
