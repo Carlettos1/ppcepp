@@ -1,6 +1,9 @@
 const express = require('express');
 const db = require('../config/db');
 const router = express.Router();
+const requirePrivilege = require('../middleware/requirePrivilege');
+
+router.use(requirePrivilege(1));
 
 // Create new assignment
 router.post('/', (req, res) => {

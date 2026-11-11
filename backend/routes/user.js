@@ -2,6 +2,9 @@ const express = require('express');
 const db = require('../config/db');
 
 const router = express.Router();
+const requirePrivilege = require('../middleware/requirePrivilege');
+
+router.use(requirePrivilege(1));
 
 // get all users
 router.get('/all', (req, res) => {
@@ -22,7 +25,7 @@ router.get('/teacher/:id', (req, res) => {
 });
 
 // delete 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', requirePrivilege(2), (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM user WHERE id = ?', [id], (err, results) => {
         if (err) {
@@ -32,7 +35,7 @@ router.delete('/:id', (req, res) => {
     });
 });
 
-router.put("/upgrade/:id", (req, res) => {
+router.put("/upgrade/:id", requirePrivilege(2), (req, res) => {
     const { id } = req.params;
     db.query("UPDATE user SET superuser = superuser + 1 WHERE id = ?", [id], (err, results) => {
         if (err) {
@@ -42,7 +45,7 @@ router.put("/upgrade/:id", (req, res) => {
     });
 });
 
-router.put("/downgrade/:id", (req, res) => {
+router.put("/downgrade/:id", requirePrivilege(2), (req, res) => {
     const { id } = req.params;
     db.query("UPDATE user SET superuser = superuser - 1 WHERE id = ?", [id], (err, results) => {
         if (err) {

@@ -1,9 +1,11 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const jwtSecret = require('../config/jwt');
 const db = require('../config/db');
 
 const router = express.Router();
+const requirePrivilege = require('../middleware/requirePrivilege');
 
 // if no user exist, add default admin
 db.query('SELECT id, username, superuser, teacher as teacher_id FROM user ORDER BY superuser DESC, teacher_id DESC, id DESC', (err, results) => {
@@ -39,8 +41,8 @@ db.query('SELECT id, username, superuser, teacher as teacher_id FROM user ORDER 
 });
 
 
-// Registration
-router.post('/register', (req, res) => {
+// Registration, privilege 1 or more can add students
+router.post('/register', requirePrivilege(1), (req, res) => {
     const { username, password, teacher_id } = req.body;
     const hashedPassword = bcrypt.hash(password, 10, (err, hash) => {
         if (err) {
@@ -60,12 +62,13 @@ router.post('/register', (req, res) => {
     });
 });
 
-router.post('/mass-register', (req, res) => {
+// registering by batch
+router.post('/mass-register', requirePrivilege(2), (req, res) => {
     const users = req.body.users;
-    const token = req.headers['authorization'];
+    const token = req.headers.authorization?.replace(/^Bearer\s+/i, '').trim();
 
     if (!token) { return res.status(401).json({ error: 'Unauthorized' }); }
-    jwt.verify(token, 'your_secret_key', (err, _user) => {
+    jwt.verify(token, jwtSecret, { algorithms: ['HS256'] }, (err, _user) => {
         if (err) { return res.status(403).json({ error: 'Forbidden' }); }
 
         const teacher = users[0];
@@ -134,31 +137,33 @@ router.post('/login', (req, res) => {
             return res.status(400).json({ error: 'Invalid username or password 2' });
         }
 
-        const token = jwt.sign({ id: user.id, role: user.superuser }, 'your_secret_key', { expiresIn: '3h' });
+        const token = jwt.sign({ id: user.id, role: user.superuser }, jwtSecret, { expiresIn: '3h' });
         res.json({ message: 'Login successful', token, user: { id: user.id, username: user.username } });
     });
 });
 
+// verifies if the provided token is correctly logged in, and returns the role and id of the token bearer
 router.get("/verify", (req, res) => {
-    const token = req.headers['authorization'];
-    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+    const token = req.headers.authorization?.replace(/^Bearer\s+/i, '').trim();
+    if (!token) { return res.status(401).json({ error: 'Unauthorized' }); }
 
-    jwt.verify(token, 'your_secret_key', (err, user) => {
-        if (err) return res.status(403).json({ error: 'Forbidden' });
+    jwt.verify(token, jwtSecret, { algorithms: ['HS256'] }, (err, user) => {
+        if (err) { return res.status(403).json({ error: 'Forbidden' }); }
         res.json({ message: 'Authorized', role: user.role, id: user.id });
     });
 }
 );
 
 // returns all info about user (except password), it requires a token
+// parses the token
 router.get("/info", (req, res) => {
-    const token = req.headers['authorization'];
-    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+    const token = req.headers.authorization?.replace(/^Bearer\s+/i, '').trim();
+    if (!token) { return res.status(401).json({ error: 'Unauthorized' }); }
 
-    jwt.verify(token, 'your_secret_key', (err, user) => {
-        if (err) return res.status(403).json({ error: 'Forbidden' });
+    jwt.verify(token, jwtSecret, { algorithms: ['HS256'] }, (err, user) => {
+        if (err) { return res.status(403).json({ error: 'Forbidden' }); }
         db.query('SELECT * FROM user WHERE id = ?', [user.id], (err, results) => {
-            if (err) return res.status(400).json({ error: 'Internal server error' });
+            if (err) { return res.status(400).json({ error: 'Internal server error' }); }
             res.json({ message: 'Authorized', role: results[0].superuser, id: user.id, name: results[0].username, teacher: results[0].teacher, isAdmin: user.role > 0 });
         });
     });

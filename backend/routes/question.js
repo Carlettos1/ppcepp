@@ -11,9 +11,10 @@ const db = require('../config/db');
 */
 
 const router = express.Router();
+const requirePrivilege = require('../middleware/requirePrivilege');
 
 // get all questions
-router.get('/all', (req, res) => {
+router.get('/all', requirePrivilege(1), (req, res) => {
     db.query('SELECT * FROM question', (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Internal server error' });
@@ -34,7 +35,7 @@ router.get('/:id', (req, res) => {
 });
 
 // modify question
-router.put('/:id', (req, res) => {
+router.put('/:id', requirePrivilege(1), (req, res) => {
     const { id } = req.params;
     const { title, question, example, prepend } = req.body;
     db.query('UPDATE question SET title = ?, question = ?, example = ?, prepend = ? WHERE id = ?', [title, question, example, prepend, id], (err, results) => {
@@ -46,7 +47,7 @@ router.put('/:id', (req, res) => {
 });
 
 // create question
-router.post('/', (req, res) => {
+router.post('/', requirePrivilege(1), (req, res) => {
     const { title, question, example, prepend } = req.body;
     db.query('INSERT INTO question (title, question, example, prepend) VALUES (?, ?, ?, ?)', [title, question, example, prepend], (err, results) => {
         if (err) {
@@ -57,7 +58,7 @@ router.post('/', (req, res) => {
 });
 
 // delete question
-router.delete('/:id', (req, res) => {
+router.delete('/:id', requirePrivilege(1), (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM question WHERE id = ?', [id], (err, results) => {
         if (err) {

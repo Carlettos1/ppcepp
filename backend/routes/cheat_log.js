@@ -10,9 +10,10 @@ const db = require('../config/db');
 const recentLogs = new Map(); // Stores recent entries temporarily
 const DUPLICATE_TIME_WINDOW = 100; // 100ms window
 const router = express.Router();
+const requirePrivilege = require('../middleware/requirePrivilege');
 
 // get all cheat logs
-router.get('/all', (req, res) => {
+router.get('/all', requirePrivilege(1), (req, res) => {
     db.query('SELECT * FROM cheat_log', (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Internal server error' });
@@ -21,7 +22,7 @@ router.get('/all', (req, res) => {
     });
 });
 
-router.get('/all/named', (req, res) => {
+router.get('/all/named', requirePrivilege(1), (req, res) => {
     db.query('SELECT cheat_log.id, user.username as user_name, cheat_log.action as action, cheat_log.context as context, UNIX_TIMESTAMP(cheat_log.timestamp) as timestamp FROM cheat_log INNER JOIN user ON cheat_log.user_id = user.id ORDER BY cheat_log.timestamp DESC LIMIT 100', (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Internal server error' });
@@ -32,7 +33,7 @@ router.get('/all/named', (req, res) => {
 );
 
 // get cheat log by id
-router.get('/:id', (req, res) => {
+router.get('/:id', requirePrivilege(1), (req, res) => {
     const { id } = req.params;
     db.query('SELECT * FROM cheat_log WHERE id = ?', [id], (err, results) => {
         if (err) {
@@ -67,7 +68,7 @@ router.post('/', (req, res) => {
 });
 
 // delete cheat log
-router.delete('/:id', (req, res) => {
+router.delete('/:id', requirePrivilege(1), (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM cheat_log WHERE id = ?', [id], (err, results) => {
         if (err) {
@@ -78,7 +79,7 @@ router.delete('/:id', (req, res) => {
 });
 
 // get cheat logs by user_id
-router.get('/user/:id', (req, res) => {
+router.get('/user/:id', requirePrivilege(1), (req, res) => {
     const { id } = req.params;
     db.query('SELECT * FROM cheat_log WHERE user_id = ?', [id], (err, results) => {
         if (err) {
@@ -88,7 +89,7 @@ router.get('/user/:id', (req, res) => {
     });
 });
 
-router.get("/teacher/:id", (req, res) => {
+router.get("/teacher/:id", requirePrivilege(1), (req, res) => {
     const { id } = req.params;
     db.query("SELECT cheat_log.id, user.username as user_name, cheat_log.action as action, cheat_log.context as context, UNIX_TIMESTAMP(cheat_log.timestamp) as timestamp FROM cheat_log INNER JOIN user ON cheat_log.user_id = user.id WHERE user.teacher = ? ORDER BY cheat_log.timestamp DESC LIMIT 100", [id], (err, results) => {
         if (err) {

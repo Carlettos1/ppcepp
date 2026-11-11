@@ -1,16 +1,17 @@
 const express = require('express');
 const db = require('../config/db');
 const jwt = require('jsonwebtoken');
+const jwtSecret = require('../config/jwt');
 
 const router = express.Router();
 
 /// Get all answers based on the auth token
 /// Returns if the user has submitted the exam or not by checking if there is an entry on the answer table with the id decripted from the token
 router.get('/', (req, res) => {
-    const token = req.headers['authorization'];
+    const token = req.headers.authorization?.replace(/^Bearer\s+/i, '').trim();
     if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
-    jwt.verify(token, 'your_secret_key', (err, user) => {
+    jwt.verify(token, jwtSecret, { algorithms: ['HS256'] }, (err, user) => {
         if (err) return res.status(403).json({ error: 'Forbidden' });
 
         db.query('SELECT * FROM answer WHERE user_id = ?', [user.id], (err, results) => {
@@ -51,10 +52,10 @@ router.get('/', (req, res) => {
 
 /// Submit the answer using the auth token
 router.post('/submit', (req, res) => {
-    const token = req.headers['authorization'];
+    const token = req.headers.authorization?.replace(/^Bearer\s+/i, '').trim();
     if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
-    jwt.verify(token, 'your_secret_key', (err, user) => {
+    jwt.verify(token, jwtSecret, { algorithms: ['HS256'] }, (err, user) => {
         if (err) return res.status(403).json({ error: 'Forbidden' });
         const { question_id, answer } = req.body;
         console.log("Entregando prueba de: " + user.id + ": " + question_id);
@@ -103,10 +104,10 @@ router.post('/submit', (req, res) => {
 
 /// Autosave the answer using the auth token
 router.post('/autosave', (req, res) => {
-    const token = req.headers['authorization'];
+    const token = req.headers.authorization?.replace(/^Bearer\s+/i, '').trim();
     if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
-    jwt.verify(token, 'your_secret_key', (err, user) => {
+    jwt.verify(token, jwtSecret, { algorithms: ['HS256'] }, (err, user) => {
         if (err) return res.status(403).json({ error: 'Forbidden' });
         const { question_id, answer } = req.body;
 

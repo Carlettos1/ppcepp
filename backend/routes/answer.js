@@ -10,6 +10,10 @@ const db = require('../config/db');
 */
 
 const router = express.Router();
+const requirePrivilege = require('../middleware/requirePrivilege');
+
+// To see answers, a privilege for at least 1 is needed
+router.use(requirePrivilege(1));
 
 // get all answers
 router.get('/all', (req, res) => {

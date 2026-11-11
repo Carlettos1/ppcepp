@@ -2,8 +2,9 @@ const express = require('express');
 const db = require('../config/db');
 
 const router = express.Router();
+const requirePrivilege = require('../middleware/requirePrivilege');
 
-router.get("/all", (req, res) => {
+router.get("/all", requirePrivilege(1), (req, res) => {
     db.query("SELECT exam_time.teacher_id, user.username, exam_time.start_time, exam_time.end_time FROM exam_time INNER JOIN user ON exam_time.teacher_id = user.id ORDER BY user.id DESC", [], (err, results) => {
         if (err) {
             return res.status(500).json({ error: 'Internal server error' });
@@ -24,7 +25,7 @@ router.get('/:teacher_id', (req, res) => {
 });
 
 // set start_time and end_time of the given teacher's exam
-router.post("/:teacher_id", (req, res) => {
+router.post("/:teacher_id", requirePrivilege(1), (req, res) => {
     // if the entry exists in the database, then update, if not, create it.
     const { start_time, end_time } = req.body;
     const { teacher_id } = req.params;
@@ -52,7 +53,7 @@ router.post("/:teacher_id", (req, res) => {
     });
 });
 
-router.patch("/start/:teacher_id", (req, res) => {
+router.patch("/start/:teacher_id", requirePrivilege(1), (req, res) => {
     const { start_time } = req.body;
     const { teacher_id } = req.params;
     db.query("UPDATE exam_time SET start_time = ? WHERE teacher_id = ?", [start_time, teacher_id], (err, result) => {
@@ -63,7 +64,7 @@ router.patch("/start/:teacher_id", (req, res) => {
     });
 });
 
-router.patch("/end/:teacher_id", (req, res) => {
+router.patch("/end/:teacher_id", requirePrivilege(1), (req, res) => {
     const { end_time } = req.body;
     const { teacher_id } = req.params;
     db.query("UPDATE exam_time SET end_time = ? WHERE teacher_id = ?", [end_time, teacher_id], (err, result) => {
